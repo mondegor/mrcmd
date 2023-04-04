@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o pipefail -e
 
-export MRCMD_VERSION="0.1.0"
+export MRCMD_VERSION="0.2.0"
 export MRCMD_DIR=${1:?}
 shift
 
@@ -19,8 +19,8 @@ source "${MRCMD_DIR}/core/lib.sh"
 source "${MRCMD_DIR}/core/main.sh"
 source "${MRCMD_DIR}/core/plugins.sh"
 source "${MRCMD_DIR}/core/plugins-available.sh"
-source "${MRCMD_DIR}/core/scripts.sh"
-source "${MRCMD_DIR}/core/scripts-available.sh"
+source "${MRCMD_DIR}/core/plugins-scripts.sh"
+source "${MRCMD_DIR}/core/plugins-scripts-available.sh"
 source "${MRCMD_DIR}/core/validate.sh"
 
 mrcmd_run "$@"

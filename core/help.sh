@@ -11,7 +11,6 @@ mrcmd_help_exec() {
   echo -e "${CC_YELLOW}Available commands:${CC_END}"
 
   mrcmd_plugins_exec_method help false
-  mrcmd_scripts_help_exec
 }
 
 mrcmd_help_head() {

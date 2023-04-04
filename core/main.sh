@@ -2,7 +2,6 @@
 
 export APPX_DIR=.
 export APPX_PLUGINS_DIR=""
-export APPX_SCRIPTS_DIR=""
 
 export CONST_DIR_CORE_INDEX=0
 export CONST_DIR_PROJECT_INDEX=1
@@ -10,7 +9,6 @@ export CONST_DIR_PROJECT_INDEX=1
 # пути к системным плагинам и скриптам, а также к плагинам и скриптам сервиса
 export MRCMD_DIR_ARRAY=("${MRCMD_DIR}" "${APPX_DIR}")
 export MRCMD_PLUGINS_SRC_ARRAY=("plugins" "")
-export MRCMD_SCRIPTS_SRC_ARRAY=("scripts" "")
 
 # пути к переменным сервиса
 export MRCMD_DOTENV_ARRAY=("${APPX_DIR}/.env" "${APPX_DIR}/.install.env")
@@ -94,13 +92,6 @@ mrcmd_init_paths() {
 
     APPX_PLUGINS_DIR="${APPX_DIR}/${APPX_PLUGINS_SRC}"
     MRCMD_PLUGINS_SRC_ARRAY[1]="${APPX_PLUGINS_SRC}"
-  fi
-
-  if [ -n "${APPX_SCRIPTS_SRC}" ]; then
-    mrcmd_check_dir_required "Scripts" ${APPX_DIR}/${APPX_SCRIPTS_SRC}
-
-    APPX_SCRIPTS_DIR="${APPX_DIR}/${APPX_SCRIPTS_SRC}"
-    MRCMD_SCRIPTS_SRC_ARRAY[1]="${APPX_SCRIPTS_SRC}"
   fi
 }
 

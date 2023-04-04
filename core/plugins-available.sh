@@ -13,48 +13,40 @@ mrcmd_plugins_help_available_exec() {
 
 # private
 mrcmd_plugins_available_current_value() {
-  mrcmd_check_var_required MRCMD_PLUGINS_LOADED_ARRAY
-  mrcmd_check_var_required MRCMD_PLUGINS_LOADED_DIRS_ARRAY
+  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_ARRAY
+  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
 
   local PLUGIN_NAME
-  local DIR_ARRAY_INDEX
   local PLUGINS
-  local II=0
-
-  for PLUGIN_NAME in "${MRCMD_PLUGINS_LOADED_ARRAY[@]}"
-  do
-    DIR_ARRAY_INDEX=${MRCMD_PLUGINS_LOADED_DIRS_ARRAY[${II}]}
-
-    if [[ ${DIR_ARRAY_INDEX} -eq ${CONST_DIR_CORE_INDEX} ]]; then
-      PLUGINS="${PLUGINS} ${PLUGIN_NAME}"
-    fi
-
-    II=$((II + 1))
-  done
 
   echo -e "${CC_YELLOW}Current value of MRCMD_PLUGINS_ENABLED:${CC_END}"
 
+  PLUGINS=$(mrcmd_plugins_available_get_core_plugins)
+
+  if [[ -z "${PLUGINS}" ]]; then
+    mrcmd_echo_message_warning "No core plugins are included"
+    return
+  fi
+
   if [[ "${MRCMD_PLUGINS_ENABLED}" == "${PLUGINS:1}" ]]; then
     mrcmd_echo_message_ok "${MRCMD_PLUGINS_ENABLED}" "  "
-  else
-    if [ -n "${MRCMD_PLUGINS_ENABLED}" ]; then
-      mrcmd_echo_message_warning "${MRCMD_PLUGINS_ENABLED}" "  "
-    else
-      mrcmd_echo_message_error "All core plugins are disabled" "  "
-    fi
-
-    echo -e "For example, to enable all core plugins, you need to add to ${CC_BLUE}${MRCMD_DOTENV_ARRAY[0]}${CC_END} of project:"
-    mrcmd_echo_message "${CC_BG_GRAY}" "MRCMD_PLUGINS_ENABLED=\"${PLUGINS:1}\"" "  "
+    return
   fi
+
+  if [ -n "${MRCMD_PLUGINS_ENABLED}" ]; then
+    mrcmd_echo_message_warning "${MRCMD_PLUGINS_ENABLED}" "  "
+  else
+    mrcmd_echo_message_error "All core plugins are disabled" "  "
+  fi
+
+  echo -e "For example, to enable all core plugins, you need to add to ${CC_BLUE}${MRCMD_DOTENV_ARRAY[0]}${CC_END} of project:"
+  mrcmd_echo_message "${CC_BG_GRAY}" "MRCMD_PLUGINS_ENABLED=\"${PLUGINS:1}\"" "  "
 }
 
 # private
 mrcmd_plugins_available_list() {
-  mrcmd_check_var_required MRCMD_PLUGINS_LOADED_ARRAY
-  mrcmd_check_var_required MRCMD_PLUGINS_LOADED_DIRS_ARRAY
-
-  echo -e "${CC_YELLOW}Available core plugins:${CC_END}"
-  echo ""
+  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_ARRAY
+  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
 
   local PLUGIN_NAME
   local DIR_INDEX
@@ -63,11 +55,16 @@ mrcmd_plugins_available_list() {
   local PLUGIN_SRC
   local II=0
 
-  for PLUGIN_NAME in "${MRCMD_PLUGINS_LOADED_ARRAY[@]}"
+  for PLUGIN_NAME in "${MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
   do
-    DIR_INDEX=${MRCMD_PLUGINS_LOADED_DIRS_ARRAY[${II}]}
+    DIR_INDEX=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${II}]}
     PLUGIN_DIR=${MRCMD_DIR_ARRAY[${DIR_INDEX}]}
     PLUGIN_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${DIR_INDEX}]}
+
+    if [[ ${II} -eq 0 ]] && [[ ${DIR_INDEX} -eq ${CONST_DIR_CORE_INDEX} ]]; then
+      echo -e "${CC_YELLOW}Available core plugins:${CC_END}"
+      echo ""
+    fi
 
     if [[ ${DIR_INDEX} -ne ${DIR_INDEX_LAST} ]]; then
       DIR_INDEX_LAST=${DIR_INDEX}
@@ -127,4 +124,25 @@ mrcmd_plugins_available_echo_plugin_methods() {
   else
     echo ""
   fi
+}
+
+# private
+mrcmd_plugins_available_get_core_plugins() {
+  local DIR_ARRAY_INDEX
+  local PLUGINS
+  local II=0
+
+  for PLUGIN_NAME in "${MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
+  do
+    DIR_ARRAY_INDEX=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${II}]}
+
+    if [[ ${DIR_ARRAY_INDEX} -eq ${CONST_DIR_CORE_INDEX} ]]; then
+      PLUGINS="${PLUGINS} ${PLUGIN_NAME}"
+    fi
+
+    II=$((II + 1))
+  done
+
+  echo "${PLUGINS}"
+  exit 0
 }

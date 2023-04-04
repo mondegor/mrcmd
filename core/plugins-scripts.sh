@@ -24,7 +24,7 @@ mrcmd_scripts_call_function() {
       local TMP_PATH
 
       if [[ "${IS_SHORT_FUNCTION}" == true ]]; then
-        SCRIPT_SRC=${MRCMD_SCRIPTS_SRC_ARRAY[${II}]}
+        SCRIPT_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
         TMP_PATH="${SCRIPT_DIR}/${SCRIPT_SRC}/${SCRIPT_PATH}.sh"
       else
         TMP_PATH="${SCRIPT_DIR}/${SCRIPT_PATH}.sh"
@@ -40,8 +40,8 @@ mrcmd_scripts_call_function() {
 
   if [[ "${II}" -gt ${CONST_DIR_PROJECT_INDEX} ]]; then # length of MRCMD_DIR_ARRAY
     mrcmd_echo_message_error "File ${SCRIPT_PATH}.sh is not found in mtcmd core dir`
-                             ` ${MRCMD_DIR_ARRAY[${CONST_DIR_CORE_INDEX}]}/${MRCMD_SCRIPTS_SRC_ARRAY[${CONST_DIR_CORE_INDEX}]}/`
-                             ` and project dir ${APPX_SCRIPTS_DIR}/"
+                             ` ${MRCMD_DIR_ARRAY[${CONST_DIR_CORE_INDEX}]}/${MRCMD_PLUGINS_SRC_ARRAY[${CONST_DIR_CORE_INDEX}]}/`
+                             ` and project dir ${APPX_PLUGINS_DIR}/"
     exit 1
   fi
 
@@ -86,7 +86,7 @@ mrcmd_scripts_load() {
 
   for SCRIPT_DIR in "${MRCMD_DIR_ARRAY[@]}"
   do
-    SCRIPT_SRC=${MRCMD_SCRIPTS_SRC_ARRAY[${II}]}
+    SCRIPT_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
     PATH_LENGTH=$((${#SCRIPT_DIR} + ${#SCRIPT_SRC} + 2))
 
     # if project scripts dir is not included

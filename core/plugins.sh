@@ -2,8 +2,9 @@
 
 export MRCMD_PLUGINS_ENABLED
 export MRCMD_PLUGINS_ENABLED_ARRAY
+export MRCMD_PLUGINS_AVAILABLE_ARRAY
+export MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
 export MRCMD_PLUGINS_LOADED_ARRAY
-export MRCMD_PLUGINS_LOADED_DIRS_ARRAY
 export MRCMD_PLUGINS_METHOD_IS_EXECUTED=false
 
 mrcmd_plugins_init() {
@@ -40,8 +41,9 @@ mrcmd_plugins_load() {
   local II=0
   local JJ=0
 
+  MRCMD_PLUGINS_AVAILABLE_ARRAY=()
+  MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY=()
   MRCMD_PLUGINS_LOADED_ARRAY=()
-  MRCMD_PLUGINS_LOADED_DIRS_ARRAY=()
 
   for PLUGIN_DIR in "${MRCMD_DIR_ARRAY[@]}"
   do
@@ -64,24 +66,25 @@ mrcmd_plugins_load() {
       PATH_LENGTH=$((${#PLUGIN_DIR} + ${#PLUGIN_SRC} + 2))
       PLUGIN_NAME=${PLUGIN_PATH:${PATH_LENGTH}:-3}
 
-      if [[ "${II}" -eq ${CONST_DIR_CORE_INDEX} ]] &&
-         [[ "$(mrcmd_in_array "${PLUGIN_NAME}" MRCMD_PLUGINS_ENABLED_ARRAY[@])" != true ]]; then
-        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "Plugin: ${PLUGIN_PATH} [skipped]"
-        continue
-      fi
-
-      # shellcheck source=${PLUGIN_PATH}
-      source "${PLUGIN_PATH}"
-
-      mrcmd_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_GREEN}" "Loaded ${PLUGIN_NAME} from ${PLUGIN_PATH}"
-
       if [[ "$(mrcmd_in_array "${PLUGIN_NAME}" MRCMD_PLUGINS_LOADED_ARRAY[@])" == true ]]; then
         mrcmd_echo_message_error "Conflict: plugin ${PLUGIN_NAME} in ${PLUGIN_PATH} is already registered in mrcmd core [skipped]"
         continue
       fi
 
-      MRCMD_PLUGINS_LOADED_ARRAY[${JJ}]=${PLUGIN_NAME}
-      MRCMD_PLUGINS_LOADED_DIRS_ARRAY[${JJ}]=${II}
+      if [[ "${II}" -ne ${CONST_DIR_CORE_INDEX} ]] ||
+         [[ "$(mrcmd_in_array "${PLUGIN_NAME}" MRCMD_PLUGINS_ENABLED_ARRAY[@])" == true ]]; then
+        # shellcheck source=${PLUGIN_PATH}
+        source "${PLUGIN_PATH}"
+
+        mrcmd_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_GREEN}" "Loaded ${PLUGIN_NAME} from ${PLUGIN_PATH}"
+
+        MRCMD_PLUGINS_LOADED_ARRAY[${JJ}]=${PLUGIN_NAME}
+      else
+        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "Plugin: ${PLUGIN_PATH} [skipped]"
+      fi
+
+      MRCMD_PLUGINS_AVAILABLE_ARRAY[${JJ}]=${PLUGIN_NAME}
+      MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${JJ}]=${II}
 
       JJ=$((JJ + 1))
     done
