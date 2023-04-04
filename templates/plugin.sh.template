@@ -1,0 +1,40 @@
+#!/bin/bash
+
+mrcmd_plugins_${MRVAR_PLUGIN_NAME}_method_config() {
+  local NOT_USED
+}
+
+mrcmd_plugins_${MRVAR_PLUGIN_NAME}_method_exec() {
+  local COMMAND=${1:?}
+
+  case ${COMMAND} in
+
+    ${MRVAR_PLUGIN_NAME})
+      echo "${MRVAR_PLUGIN_NAME} is executed"
+      ;;
+
+    *)
+      # shellcheck disable=SC2034
+      MRCMD_PLUGINS_METHOD_IS_EXECUTED=false
+      ;;
+
+  esac
+}
+
+mrcmd_plugins_${MRVAR_PLUGIN_NAME}_method_init() {
+  local NOT_USED
+}
+
+mrcmd_plugins_${MRVAR_PLUGIN_NAME}_method_install() {
+  local NOT_USED
+}
+
+mrcmd_plugins_${MRVAR_PLUGIN_NAME}_method_uninstall() {
+  local NOT_USED
+}
+
+mrcmd_plugins_${MRVAR_PLUGIN_NAME}_method_help() {
+  echo -e "  ${CC_YELLOW}${MRVAR_PLUGIN_NAME}${CC_END}:"
+  echo -e "    ${CC_GREEN}${MRVAR_PLUGIN_NAME}${CC_END}    Echo about this plugin"
+  echo ""
+}
