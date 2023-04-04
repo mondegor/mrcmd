@@ -13,8 +13,8 @@ mrcmd_plugins_help_available_exec() {
 
 # private
 mrcmd_plugins_available_current_value() {
-  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_ARRAY
-  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
+  mrcmd_check_env_var_required MRCMD_PLUGINS_AVAILABLE_ARRAY
+  mrcmd_check_env_var_required MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
 
   local PLUGIN_NAME
   local PLUGINS
@@ -45,21 +45,21 @@ mrcmd_plugins_available_current_value() {
 
 # private
 mrcmd_plugins_available_list() {
-  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_ARRAY
-  mrcmd_check_var_required MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
+  mrcmd_check_env_var_required MRCMD_PLUGINS_AVAILABLE_ARRAY
+  mrcmd_check_env_var_required MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY
 
   local PLUGIN_NAME
   local DIR_INDEX
   local DIR_INDEX_LAST=0
-  local PLUGIN_DIR
-  local PLUGIN_SRC
+  local ROOT_DIR
+  local PLUGINS_SRC
   local II=0
 
   for PLUGIN_NAME in "${MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
   do
     DIR_INDEX=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${II}]}
-    PLUGIN_DIR=${MRCMD_DIR_ARRAY[${DIR_INDEX}]}
-    PLUGIN_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${DIR_INDEX}]}
+    ROOT_DIR=${MRCMD_DIR_ARRAY[${DIR_INDEX}]}
+    PLUGINS_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${DIR_INDEX}]}
 
     if [[ ${II} -eq 0 ]] && [[ ${DIR_INDEX} -eq ${CONST_DIR_CORE_INDEX} ]]; then
       echo -e "${CC_YELLOW}Available core plugins:${CC_END}"
@@ -73,7 +73,7 @@ mrcmd_plugins_available_list() {
       echo ""
     fi
 
-    mrcmd_plugins_available_echo_plugin "${PLUGIN_NAME}" "${PLUGIN_DIR}/${PLUGIN_SRC}/${PLUGIN_NAME}.sh" ${DIR_INDEX}
+    mrcmd_plugins_available_echo_plugin "${PLUGIN_NAME}" "${ROOT_DIR}/${PLUGINS_SRC}/${PLUGIN_NAME}.sh" ${DIR_INDEX}
 
     II=$((II + 1))
   done

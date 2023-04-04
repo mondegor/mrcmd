@@ -7,57 +7,45 @@ mrcmd_scripts_call_function() {
   mrcmd_debug_echo_call_function "${FUNCNAME[0]}" "$@"
 
   local SCRIPT_PATH=${1:?}
-  local SCRIPT_FUNCTION="${SCRIPT_PATH//[\/-]/_}"
   shift
 
-  # if call from core or projects scripts/ dirs
-  local IS_SHORT_FUNCTION=true
+  local ROOT_DIR
+  local SCRIPT_FUNCTION="mrcmd_func_${SCRIPT_PATH//[\/-]/_}"
+  local CURRENT_PLUGIN_NAME=${SCRIPT_PATH%%/*}
+  local CURRENT_PLUGINS_DIR
   local II=0
-  local IS_FUNCTION_EXISTS
+  local IS_FUNC_EXISTS
 
-  if [[ "${SCRIPT_PATH}" != "${SCRIPT_PATH//\//_}" ]]; then
-    IS_SHORT_FUNCTION=false
-  fi
-
-  for SCRIPT_DIR in "${MRCMD_DIR_ARRAY[@]}"
+  for ROOT_DIR in "${MRCMD_DIR_ARRAY[@]}"
   do
-      local TMP_PATH
+    local PLUGINS_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
+    CURRENT_PLUGINS_DIR="${ROOT_DIR}/${PLUGINS_SRC}"
+    local TMP_PATH="${CURRENT_PLUGINS_DIR}/${SCRIPT_PATH}.sh"
 
-      if [[ "${IS_SHORT_FUNCTION}" == true ]]; then
-        SCRIPT_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
-        TMP_PATH="${SCRIPT_DIR}/${SCRIPT_SRC}/${SCRIPT_PATH}.sh"
-      else
-        TMP_PATH="${SCRIPT_DIR}/${SCRIPT_PATH}.sh"
-      fi
+    if [ -f "${TMP_PATH}" ]; then
+      SCRIPT_PATH=${TMP_PATH}
+      break
+    fi
 
-      if [ -f "${TMP_PATH}" ]; then
-        SCRIPT_PATH=${TMP_PATH}
-        break
-      fi
+    if [[ "${II}" -eq ${CONST_DIR_PROJECT_INDEX} ]]; then # if end of MRCMD_DIR_ARRAY
+      mrcmd_echo_message_error "File ${TMP_PATH} for function ${SCRIPT_FUNCTION} is not found"
+      exit 1
+    fi
+
+    mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File ${TMP_PATH} for function ${SCRIPT_FUNCTION} is not found [skipped]"
 
     II=$((II + 1))
   done
 
-  if [[ "${II}" -gt ${CONST_DIR_PROJECT_INDEX} ]]; then # length of MRCMD_DIR_ARRAY
-    mrcmd_echo_message_error "File ${SCRIPT_PATH}.sh is not found in mtcmd core dir`
-                             ` ${MRCMD_DIR_ARRAY[${CONST_DIR_CORE_INDEX}]}/${MRCMD_PLUGINS_SRC_ARRAY[${CONST_DIR_CORE_INDEX}]}/`
-                             ` and project dir ${APPX_PLUGINS_DIR}/"
-    exit 1
-  fi
+  IS_FUNC_EXISTS="$(mrcmd_function_exists "${SCRIPT_FUNCTION}")"
 
-  if [[ "${IS_SHORT_FUNCTION}" == true ]]; then
-    SCRIPT_FUNCTION="mrcmd_scripts_${SCRIPT_FUNCTION}"
-  fi
-
-  IS_FUNCTION_EXISTS="$(mrcmd_function_exists "${SCRIPT_FUNCTION}")"
-
-  if [[ "${IS_FUNCTION_EXISTS}" != true ]]; then
+  if [[ "${IS_FUNC_EXISTS}" != true ]]; then
     # shellcheck disable=SC1090
     source "${SCRIPT_PATH}"
 
-    IS_FUNCTION_EXISTS="$(mrcmd_function_exists "${SCRIPT_FUNCTION}")"
+    IS_FUNC_EXISTS="$(mrcmd_function_exists "${SCRIPT_FUNCTION}")"
 
-    if [[ "${IS_FUNCTION_EXISTS}" != true ]]; then
+    if [[ "${IS_FUNC_EXISTS}" != true ]]; then
       mrcmd_echo_message_error "Function ${SCRIPT_FUNCTION} is not found in ${SCRIPT_PATH}"
       exit 1
     fi
@@ -67,14 +55,24 @@ mrcmd_scripts_call_function() {
 
   mrcmd_debug_echo_call_function "${SCRIPT_FUNCTION}" "$@"
 
+  local OLD_CURRENT_PLUGIN_NAME=${MRCMD_CURRENT_PLUGIN_NAME}
+  local OLD_CURRENT_PLUGINS_DIR=${MRCMD_CURRENT_PLUGINS_DIR}
+
+  MRCMD_CURRENT_PLUGIN_NAME=${CURRENT_PLUGIN_NAME}
+  MRCMD_CURRENT_PLUGINS_DIR=${CURRENT_PLUGINS_DIR}
+
   ${SCRIPT_FUNCTION} "$@"
+
+  # clear after execute function
+  MRCMD_CURRENT_PLUGIN_NAME=${OLD_CURRENT_PLUGIN_NAME}
+  MRCMD_CURRENT_PLUGINS_DIR=${OLD_CURRENT_PLUGINS_DIR}
 }
 
 mrcmd_scripts_load() {
   mrcmd_debug_echo_call_function "${FUNCNAME[0]}"
 
-  local SCRIPT_DIR
-  local SCRIPT_SRC
+  local ROOT_DIR
+  local PLUGINS_SRC
   local PATH_LENGTH
   local SCRIPT_PATH
   local SCRIPT_NAME
@@ -84,24 +82,24 @@ mrcmd_scripts_load() {
   MRCMD_SCRIPTS_LOADED_ARRAY=()
   MRCMD_SCRIPTS_LOADED_DIRS_ARRAY=()
 
-  for SCRIPT_DIR in "${MRCMD_DIR_ARRAY[@]}"
+  for ROOT_DIR in "${MRCMD_DIR_ARRAY[@]}"
   do
-    SCRIPT_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
-    PATH_LENGTH=$((${#SCRIPT_DIR} + ${#SCRIPT_SRC} + 2))
+    PLUGINS_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
+    PATH_LENGTH=$((${#ROOT_DIR} + ${#PLUGINS_SRC} + 2))
 
     # if project scripts dir is not included
-    if [[ -z "${SCRIPT_SRC}" ]]; then
+    if [[ -z "${PLUGINS_SRC}" ]]; then
       continue
     fi
 
-    for SCRIPT_PATH in "${SCRIPT_DIR}/${SCRIPT_SRC}"/*
+    for SCRIPT_PATH in "${ROOT_DIR}/${PLUGINS_SRC}"/*
     do
       if [[ "$(mrcmd_get_string_suffix "${SCRIPT_PATH}" 3)" != ".sh" ]]; then
         mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File: ${PLUGIN_PATH} [skipped]"
         continue
       fi
 
-      PATH_LENGTH=$((${#SCRIPT_DIR} + ${#SCRIPT_SRC} + 2))
+      PATH_LENGTH=$((${#ROOT_DIR} + ${#PLUGINS_SRC} + 2))
       SCRIPT_NAME=${SCRIPT_PATH:${PATH_LENGTH}:-3}
 
       # shellcheck source=${SCRIPT_PATH}

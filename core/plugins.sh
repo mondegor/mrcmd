@@ -33,8 +33,8 @@ mrcmd_plugins_enabled_array_init() {
 mrcmd_plugins_load() {
   mrcmd_debug_echo_call_function "${FUNCNAME[0]}"
 
-  local PLUGIN_DIR
-  local PLUGIN_SRC
+  local ROOT_DIR
+  local PLUGINS_SRC
   local PATH_LENGTH
   local PLUGIN_PATH
   local PLUGIN_NAME
@@ -45,25 +45,25 @@ mrcmd_plugins_load() {
   MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY=()
   MRCMD_PLUGINS_LOADED_ARRAY=()
 
-  for PLUGIN_DIR in "${MRCMD_DIR_ARRAY[@]}"
+  for ROOT_DIR in "${MRCMD_DIR_ARRAY[@]}"
   do
-    PLUGIN_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
+    PLUGINS_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
 
     # if project plugins dir is not included
-    if [[ -z "${PLUGIN_SRC}" ]]; then
+    if [[ -z "${PLUGINS_SRC}" ]]; then
       continue
     fi
 
-    PATH_LENGTH=$((${#PLUGIN_DIR} + ${#PLUGIN_SRC} + 2))
+    PATH_LENGTH=$((${#ROOT_DIR} + ${#PLUGINS_SRC} + 2))
 
-    for PLUGIN_PATH in "${PLUGIN_DIR}/${PLUGIN_SRC}"/*
+    for PLUGIN_PATH in "${ROOT_DIR}/${PLUGINS_SRC}"/*
     do
       if [[ "$(mrcmd_get_string_suffix "${PLUGIN_PATH}" 3)" != ".sh" ]]; then
         mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File: ${PLUGIN_PATH} [skipped]"
         continue
       fi
 
-      PATH_LENGTH=$((${#PLUGIN_DIR} + ${#PLUGIN_SRC} + 2))
+      PATH_LENGTH=$((${#ROOT_DIR} + ${#PLUGINS_SRC} + 2))
       PLUGIN_NAME=${PLUGIN_PATH:${PATH_LENGTH}:-3}
 
       if [[ "$(mrcmd_in_array "${PLUGIN_NAME}" MRCMD_PLUGINS_LOADED_ARRAY[@])" == true ]]; then
@@ -97,7 +97,7 @@ mrcmd_plugins_load() {
 # указанную команду, если она в нём зарегистрированна
 mrcmd_plugins_exec_method() {
   mrcmd_debug_echo_call_function "${FUNCNAME[0]}" "$@"
-  mrcmd_check_var_required MRCMD_PLUGINS_METHOD_IS_EXECUTED
+  mrcmd_check_env_var_required MRCMD_PLUGINS_METHOD_IS_EXECUTED
 
   local METHOD=${1:?}
   local IS_SHOW_HEAD=${2:?}

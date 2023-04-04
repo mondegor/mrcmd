@@ -14,7 +14,7 @@ mrcmd_help_exec() {
 }
 
 mrcmd_help_head() {
-  mrcmd_check_var_required MRCMD_VERSION
+  mrcmd_check_env_var_required MRCMD_VERSION
 
   echo ""
   echo "███╗   ███╗██████╗  █████╗ ███╗   ███╗██████╗ "

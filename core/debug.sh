@@ -32,8 +32,8 @@ mrcmd_debug_echo() {
 }
 
 mrcmd_debug_echo_call_function() {
-  local FUNCTION_NAME=${1:?}
+  local FUNC_NAME=${1:?}
   shift
 
-  mrcmd_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_YELLOW}" "Call function: ${FUNCTION_NAME}($*)"
+  mrcmd_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_YELLOW}" "Call function: ${FUNC_NAME}($*)"
 }

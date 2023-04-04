@@ -1,11 +1,25 @@
 #!/bin/bash
 
-# проверяется строка на наличие только латинских символов и дефиса
-mrcmd_check_file_name() {
-  local FILE_NAME=${1:?}
+export CONST_PATTERN_FILE_NAME="^[a-zA-Z0-9_.-]+$"
+export CONST_PATTERN_FILE_PREFIX="^[a-zA-Z0-9-]+$"
 
-  if [[ "${FILE_NAME}" =~ ^[a-zA-Z0-9_.-]+$ ]]; then
-    mrcmd_echo_message_error "File ${FILE_NAME} contains invalid characters"
+mrcmd_check_value_required() {
+  local CAPTION=${1:?}
+  local STR=${2}
+
+  if [ -z "${STR}" ]; then
+    mrcmd_echo_message_error "${CAPTION} is required"
+    exit 1
+  fi
+}
+
+mrcmd_check_name() {
+  local CAPTION=${1:?}
+  local PATTERN=${2:?}
+  local STR=${3:?}
+
+  if [[ ! "${STR}" =~ ${PATTERN} ]]; then
+    mrcmd_echo_message_error "${CAPTION} \"${STR}\" contains invalid characters, allowed characters: ${PATTERN}"
     exit 1
   fi
 }
@@ -30,7 +44,7 @@ mrcmd_check_file_required() {
   fi
 }
 
-mrcmd_check_var_required() {
+mrcmd_check_env_var_required() {
   local VAR_NAME=${1}
   local VAR_VALUE
   eval VAR_VALUE="\$$VAR_NAME"

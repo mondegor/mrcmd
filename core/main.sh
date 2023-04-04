@@ -10,13 +10,16 @@ export CONST_DIR_PROJECT_INDEX=1
 export MRCMD_DIR_ARRAY=("${MRCMD_DIR}" "${APPX_DIR}")
 export MRCMD_PLUGINS_SRC_ARRAY=("plugins" "")
 
+export MRCMD_CURRENT_PLUGINS_DIR=""
+export MRCMD_CURRENT_PLUGIN_NAME=""
+
 # пути к переменным сервиса
 export MRCMD_DOTENV_ARRAY=("${APPX_DIR}/.env" "${APPX_DIR}/.install.env")
 
 export TTY_INTERFACE
 
 mrcmd_run() {
-  mrcmd_check_var_required MRCMD_PLUGINS_METHOD_IS_EXECUTED
+  mrcmd_check_env_var_required MRCMD_PLUGINS_METHOD_IS_EXECUTED
 
   # APPX_PLUGINS_SRC=${1}
   # APPX_SCRIPTS_SRC=${2}
