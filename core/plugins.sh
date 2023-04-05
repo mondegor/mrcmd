@@ -58,8 +58,13 @@ mrcmd_plugins_load() {
 
     for PLUGIN_PATH in "${ROOT_DIR}/${PLUGINS_SRC}"/*
     do
+      if [ -d "${PLUGIN_PATH}" ]; then
+        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "Dir ${PLUGIN_PATH} ignored"
+        continue
+      fi
+
       if [[ "$(mrcmd_get_string_suffix "${PLUGIN_PATH}" 3)" != ".sh" ]]; then
-        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File: ${PLUGIN_PATH} [skipped]"
+        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File ${PLUGIN_PATH} ignored"
         continue
       fi
 
@@ -134,3 +139,35 @@ mrcmd_plugins_exec_method() {
 
   MRCMD_PLUGINS_METHOD_IS_EXECUTED=${IS_ANY_EXECUTED}
 }
+
+#mrcmd_plugins_exec_plugin() {
+#  mrcmd_debug_echo_call_function "${FUNCNAME[0]}" "$@"
+#  mrcmd_check_env_var_required MRCMD_PLUGINS_METHOD_IS_EXECUTED
+#
+#  local PLUGIN_NAME=${1:?}
+#  local METHOD=${2}
+#  shift; shift
+#
+#  local PLUGIN_METHOD
+#  local IS_METHOD_EXISTS
+#
+#  PLUGIN_METHOD="mrcmd_plugins_${PLUGIN_NAME//[\/-]/_}_method_${METHOD}"
+#  IS_METHOD_EXISTS="$(mrcmd_function_exists "${PLUGIN_METHOD}")"
+#
+#  if [[ "${IS_METHOD_EXISTS}" == true ]]; then
+#    mrcmd_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_YELLOW}" "Exec method: ${PLUGIN_METHOD}($*)"
+#
+#    MRCMD_PLUGINS_METHOD_IS_EXECUTED=true
+#
+#    if [[ "${IS_SHOW_HEAD}" == true ]]; then
+#      mrcmd_echo_message_notice "Plugin ${PLUGIN_NAME}::${METHOD}()"
+#    fi
+#
+#    ${PLUGIN_METHOD} "$@"
+#  else
+#    mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "Unimplemented method: ${PLUGIN_METHOD}($*) [skipped]"
+#  fi
+#
+#
+#  MRCMD_PLUGINS_METHOD_IS_EXECUTED=${IS_ANY_EXECUTED}
+#}

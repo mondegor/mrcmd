@@ -94,8 +94,13 @@ mrcmd_scripts_load() {
 
     for SCRIPT_PATH in "${ROOT_DIR}/${PLUGINS_SRC}"/*
     do
+      if [ -d "${SCRIPT_PATH}" ]; then
+        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "Dir ${SCRIPT_PATH} ignored"
+        continue
+      fi
+
       if [[ "$(mrcmd_get_string_suffix "${SCRIPT_PATH}" 3)" != ".sh" ]]; then
-        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File: ${PLUGIN_PATH} [skipped]"
+        mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "File ${SCRIPT_PATH} ignored"
         continue
       fi
 
