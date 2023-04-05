@@ -1,21 +1,19 @@
 #!/bin/bash
 
-export APPX_DIR=.
-export APPX_PLUGINS_DIR=""
-
 export CONST_DIR_CORE_INDEX=0
 export CONST_DIR_PROJECT_INDEX=1
 
+export APPX_PLUGINS_DIR=""
+
 # пути к системным плагинам и скриптам, а также к плагинам и скриптам сервиса
-export MRCMD_DIR_ARRAY=("${MRCMD_DIR}" "${APPX_DIR}")
-export MRCMD_PLUGINS_SRC_ARRAY=("plugins" "")
+export MRCMD_PLUGINS_DIR_ARRAY=("${MRCMD_DIR}/plugins" "")
+
+# пути к переменным сервиса
+export MRCMD_DOTENV_ARRAY=("${APPX_DIR}/.env" "${APPX_DIR}/.install.env")
 
 # only for mrcmd_scripts_call_function
 export MRCMD_CURRENT_PLUGINS_DIR=""
 export MRCMD_CURRENT_PLUGIN_NAME=""
-
-# пути к переменным сервиса
-export MRCMD_DOTENV_ARRAY=("${APPX_DIR}/.env" "${APPX_DIR}/.install.env")
 
 export TTY_INTERFACE
 
@@ -90,14 +88,20 @@ mrcmd_init() {
 
 # private
 mrcmd_init_paths() {
+  mrcmd_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_YELLOW}" "Current run path: ${APPX_DIR}"
+
+  if [[ "${APPX_DIR}/" == "${MRCMD_DIR}/"* ]]; then
+    mrcmd_echo_message_error "Mrcmd cannot run from its own dir and its subdirectories"
+    exit 1
+  fi
+
   local APPX_PLUGINS_SRC=${1}
-  shift
 
   if [ -n "${APPX_PLUGINS_SRC}" ]; then
     mrcmd_check_dir_required "Plugins" "${APPX_DIR}/${APPX_PLUGINS_SRC}"
 
     APPX_PLUGINS_DIR="${APPX_DIR}/${APPX_PLUGINS_SRC}"
-    MRCMD_PLUGINS_SRC_ARRAY[1]="${APPX_PLUGINS_SRC}"
+    MRCMD_PLUGINS_DIR_ARRAY[1]="${APPX_PLUGINS_DIR}"
   fi
 }
 

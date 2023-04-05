@@ -51,15 +51,13 @@ mrcmd_plugins_available_list() {
   local PLUGIN_NAME
   local DIR_INDEX
   local DIR_INDEX_LAST=0
-  local ROOT_DIR
-  local PLUGINS_SRC
+  local PLUGINS_DIR
   local II=0
 
   for PLUGIN_NAME in "${MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
   do
     DIR_INDEX=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${II}]}
-    ROOT_DIR=${MRCMD_DIR_ARRAY[${DIR_INDEX}]}
-    PLUGINS_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${DIR_INDEX}]}
+    PLUGINS_DIR=${MRCMD_PLUGINS_DIR_ARRAY[${DIR_INDEX}]}
 
     if [[ ${II} -eq 0 ]] && [[ ${DIR_INDEX} -eq ${CONST_DIR_CORE_INDEX} ]]; then
       echo -e "${CC_YELLOW}Available core plugins:${CC_END}"
@@ -73,7 +71,7 @@ mrcmd_plugins_available_list() {
       echo ""
     fi
 
-    mrcmd_plugins_available_echo_plugin "${PLUGIN_NAME}" "${ROOT_DIR}/${PLUGINS_SRC}/${PLUGIN_NAME}.sh" ${DIR_INDEX}
+    mrcmd_plugins_available_echo_plugin "${PLUGIN_NAME}" "${PLUGINS_DIR}/${PLUGIN_NAME}.sh" ${DIR_INDEX}
 
     II=$((II + 1))
   done

@@ -2,13 +2,11 @@
 set -o pipefail -e
 
 export MRCMD_VERSION="0.2.0"
-export MRCMD_DIR=${1:?}
-shift
+export MRCMD_DIR
+export APPX_DIR
 
-if [ ! -f "${MRCMD_DIR}/run.sh" ]; then
-  echo "Mrcmd is not found in ${MRCMD_DIR}"
-  exit 1
-fi
+MRCMD_DIR=$(realpath "${0}" | xargs dirname)
+APPX_DIR=$(realpath ".")
 
 source "${MRCMD_DIR}/core/console-colors.sh"
 source "${MRCMD_DIR}/core/debug.sh"

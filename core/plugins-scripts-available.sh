@@ -20,14 +20,12 @@ mrcmd_scripts_available_list() {
   local DIR_INDEX
   local DIR_INDEX_LAST=0
   local PLUGINS_DIR
-  local SCRIPT_SRC
   local II=0
 
   for SCRIPT_NAME in "${MRCMD_SCRIPTS_LOADED_ARRAY[@]}"
   do
     DIR_INDEX=${MRCMD_SCRIPTS_LOADED_DIRS_ARRAY[${II}]}
-    PLUGINS_DIR=${MRCMD_DIR_ARRAY[${DIR_INDEX}]}
-    SCRIPT_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${DIR_INDEX}]}
+    PLUGINS_DIR=${MRCMD_PLUGINS_DIR_ARRAY[${DIR_INDEX}]}
 
     if [[ ${DIR_INDEX} -ne ${DIR_INDEX_LAST} ]]; then
       DIR_INDEX_LAST=${DIR_INDEX}
@@ -36,7 +34,7 @@ mrcmd_scripts_available_list() {
       echo ""
     fi
 
-    mrcmd_scripts_available_echo_function "${SCRIPT_NAME}" "${PLUGINS_DIR}/${SCRIPT_SRC}/${SCRIPT_NAME}.sh"
+    mrcmd_scripts_available_echo_function "${SCRIPT_NAME}" "${PLUGINS_DIR}/${SCRIPT_NAME}.sh"
 
     II=$((II + 1))
   done

@@ -33,8 +33,7 @@ mrcmd_plugins_enabled_array_init() {
 mrcmd_plugins_load() {
   mrcmd_debug_echo_call_function "${FUNCNAME[0]}"
 
-  local ROOT_DIR
-  local PLUGINS_SRC
+  local PLUGINS_DIR
   local PATH_LENGTH
   local PLUGIN_PATH
   local PLUGIN_NAME
@@ -45,18 +44,14 @@ mrcmd_plugins_load() {
   MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY=()
   MRCMD_PLUGINS_LOADED_ARRAY=()
 
-  for ROOT_DIR in "${MRCMD_DIR_ARRAY[@]}"
+  for PLUGINS_DIR in "${MRCMD_PLUGINS_DIR_ARRAY[@]}"
   do
-    PLUGINS_SRC=${MRCMD_PLUGINS_SRC_ARRAY[${II}]}
-
     # if project plugins dir is not included
-    if [[ -z "${PLUGINS_SRC}" ]]; then
+    if [[ -z "${PLUGINS_DIR}" ]]; then
       continue
     fi
 
-    PATH_LENGTH=$((${#ROOT_DIR} + ${#PLUGINS_SRC} + 2))
-
-    for PLUGIN_PATH in "${ROOT_DIR}/${PLUGINS_SRC}"/*
+    for PLUGIN_PATH in "${PLUGINS_DIR}"/*
     do
       if [ -d "${PLUGIN_PATH}" ]; then
         mrcmd_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_BLUE}" "Dir ${PLUGIN_PATH} ignored"
@@ -68,7 +63,7 @@ mrcmd_plugins_load() {
         continue
       fi
 
-      PATH_LENGTH=$((${#ROOT_DIR} + ${#PLUGINS_SRC} + 2))
+      PATH_LENGTH=$((${#PLUGINS_DIR} + 1))
       PLUGIN_NAME=${PLUGIN_PATH:${PATH_LENGTH}:-3}
 
       if [[ "$(mrcmd_in_array "${PLUGIN_NAME}" MRCMD_PLUGINS_LOADED_ARRAY[@])" == true ]]; then
