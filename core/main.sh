@@ -98,7 +98,7 @@ mrcmd_init_paths() {
   local APPX_PLUGINS_SRC=${1}
 
   if [ -n "${APPX_PLUGINS_SRC}" ]; then
-    mrcmd_check_dir_required "Plugins" "${APPX_DIR}/${APPX_PLUGINS_SRC}"
+    mrcmd_check_dir_required "Project plugins dir" "${APPX_DIR}/${APPX_PLUGINS_SRC}"
 
     APPX_PLUGINS_DIR="${APPX_DIR}/${APPX_PLUGINS_SRC}"
     MRCMD_PLUGINS_DIR_ARRAY[1]="${APPX_PLUGINS_DIR}"
@@ -125,7 +125,7 @@ mrcmd_init_dotenv() {
 
   for DOTENV_FILE_PATH in "${MRCMD_DOTENV_ARRAY[@]}"
   do
-    mrcmd_check_file_required "ENV" "${DOTENV_FILE_PATH}"
+    mrcmd_check_file_required "ENV file" "${DOTENV_FILE_PATH}"
 
     # shellcheck disable=SC1090
     source "${DOTENV_FILE_PATH}"

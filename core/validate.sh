@@ -29,7 +29,7 @@ mrcmd_check_dir_required() {
   local DIR_PATH=${2:?}
 
   if [ ! -d "${DIR_PATH}" ]; then
-    mrcmd_echo_message_error "[${CAPTION}] Dir ${DIR_PATH} is not found"
+    mrcmd_echo_message_error "${CAPTION} ${DIR_PATH} is not found"
     exit 1
   fi
 }
@@ -39,7 +39,17 @@ mrcmd_check_file_required() {
   local FILE_PATH=${2:?}
 
   if [ ! -f "${FILE_PATH}" ]; then
-    mrcmd_echo_message_error "[${CAPTION}] File ${FILE_PATH} is not found"
+    mrcmd_echo_message_error "${CAPTION} ${FILE_PATH} is not found"
+    exit 1
+  fi
+}
+
+mrcmd_check_resource_exists() {
+  local CAPTION=${1:?}
+  local RESOURCE_PATH=${2:?}
+
+  if [ -e "${RESOURCE_PATH}" ]; then
+    mrcmd_echo_message_error "${CAPTION} ${RESOURCE_PATH} is already exists"
     exit 1
   fi
 }
