@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# export PATH="/d/mrwork/mrcmd:${PATH}"
+# chmod +x ./mrcmd
+
+readonly MRCMD_DIR=$(realpath "${BASH_SOURCE[0]}" | xargs dirname)
+readonly APPX_DIR="."
+
+source "${MRCMD_DIR}/src/core/bash.sh"
+source "${MRCMD_DIR}/src/core/colors.sh"
+source "${MRCMD_DIR}/src/core/debug.sh"
+source "${MRCMD_DIR}/src/core/dotenv.sh"
+source "${MRCMD_DIR}/src/core/echo.sh"
+source "${MRCMD_DIR}/src/core/lib.sh"
+source "${MRCMD_DIR}/src/core/tty.sh"
+source "${MRCMD_DIR}/src/core/validate.sh"
+source "${MRCMD_DIR}/src/core/xtrace.sh"
+source "${MRCMD_DIR}/src/plugins/functions.sh"
+source "${MRCMD_DIR}/src/plugins/init.sh"
+source "${MRCMD_DIR}/src/plugins/methods.sh"
+source "${MRCMD_DIR}/src/plugins/state.sh"
+source "${MRCMD_DIR}/src/config.sh"
+source "${MRCMD_DIR}/src/help.sh"
+source "${MRCMD_DIR}/src/info.sh"
+source "${MRCMD_DIR}/src/main.sh"
+
+mrcmd_main_run "$@"
