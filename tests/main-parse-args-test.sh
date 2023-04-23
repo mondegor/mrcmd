@@ -1,9 +1,13 @@
-#!/bin/bash
 
 mrcore_import "${MRCMD_DIR}/src/main.sh"
 
 function mrcmd_main_parse_args_debug_level_valid1_test() {
   MRCORE_DEBUG_LEVEL=0
+  DEBUG_LEVEL_3=3
+
+  function mrcore_debug_level_validate {
+    ${RETURN_TRUE}
+  }
 
   if mrcmd_main_parse_args --debug ${DEBUG_LEVEL_3} ; then
     if [[ ${MRCORE_DEBUG_LEVEL} -eq ${DEBUG_LEVEL_3} ]] ; then
@@ -14,15 +18,19 @@ function mrcmd_main_parse_args_debug_level_valid1_test() {
   ${EXIT_ERROR}
 }
 
+################################################################################
+
 function mrcmd_main_parse_args_debug_level_error1_test() {
-  if [[ ! "$(mrcmd_main_parse_args --debug 6 2>&1)" =~ "debug" ]] ; then
-    ${EXIT_ERROR}
-  fi
+  function mrcore_debug_level_validate {
+    ${RETURN_FALSE}
+  }
 
   if [[ ! "$(mrcmd_main_parse_args --debug "bad_value" 2>&1)" =~ "debug" ]] ; then
     ${EXIT_ERROR}
   fi
 }
+
+################################################################################
 
 function mrcmd_main_parse_args_no_color_valid1_test() {
   MRCORE_USE_COLOR=true
@@ -35,6 +43,8 @@ function mrcmd_main_parse_args_no_color_valid1_test() {
 
   ${EXIT_ERROR}
 }
+
+################################################################################
 
 function mrcmd_main_parse_args_verbose_valid1_test() {
   MRCORE_VERBOSE=false

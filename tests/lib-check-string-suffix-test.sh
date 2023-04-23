@@ -1,4 +1,3 @@
-#!/bin/bash
 
 mrcore_import "${MRCMD_DIR}/src/core/lib.sh"
 
@@ -11,6 +10,8 @@ function mrcore_lib_check_string_suffix_true1_test() {
   fi
 }
 
+################################################################################
+
 function mrcore_lib_check_string_suffix_true2_test() {
   local str=".suffix"
   local suffix=".suffix"
@@ -19,6 +20,8 @@ function mrcore_lib_check_string_suffix_true2_test() {
     ${EXIT_ERROR}
   fi
 }
+
+################################################################################
 
 function mrcore_lib_check_string_suffix_false_test() {
   local str="string.suffix"
