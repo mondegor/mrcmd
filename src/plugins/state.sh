@@ -1,59 +1,72 @@
 
-function mrcmd_plugins_exec_current_state() {
+function mrcmd_plugins_exec_state() {
   mrcore_debug_echo_call_function "${FUNCNAME[0]}"
-
-  mrcmd_help_exec_head
 
   local pluginsAvailable
 
-  echo -e "Current status:"
-  mrcore_echo_sample "Available plugins: ${#MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}, Enabled: ${#MRCMD_PLUGINS_LOADED_ARRAY[@]}." "  "
+  echo -e "${CC_YELLOW}${MRCMD_INFO_CAPTION} path${CC_END}: ${CC_BLUE}$(realpath "${MRCMD_DIR}")${CC_END}"
+  echo -e "${CC_YELLOW}Project path${CC_END}: ${CC_BLUE}$(realpath "${APPX_DIR}")${CC_END}"
+  echo ""
+  echo -en "${CC_YELLOW}Available plugins${CC_END}: ${#MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
+  echo -en ", ${CC_GREEN}Loaded${CC_END}: ${#MRCMD_PLUGINS_LOADED_ARRAY[@]}"
 
-  echo -e "Current real project path:"
-  mrcore_echo_sample "$(realpath "${APPX_DIR}")" "  "
+  if [[ "${#MRCMD_PLUGINS_DEPENDS_ALL_ARRAY[@]}" -gt 0 ]]; then
+    echo -en ", ${CC_RED}Required${CC_END}: ${#MRCMD_PLUGINS_DEPENDS_ALL_ARRAY[@]}"
+    echo -en ", ${CC_RED}Rejected${CC_END}: ${#MRCMD_PLUGINS_LOADING_ARRAY[@]}"
+  fi
 
-  echo -e "Current value of ${CC_YELLOW}MRCMD_SHARED_PLUGINS_ENABLED${CC_END}:"
+  echo ""
+  echo ""
 
-  pluginsAvailable=$(mrcmd_plugins_available_get_core_plugins_available)
+  echo -e "${CC_GREEN}Loaded plugins${CC_END}:"
+  mrcore_echo_ok "$(mrcmd_lib_implode "," MRCMD_PLUGINS_LOADED_ARRAY[@])" "  "
 
-  if [[ "${MRCMD_SHARED_PLUGINS_ENABLED-}" == "${pluginsAvailable}" ]]; then
+  if [[ "${#MRCMD_PLUGINS_DEPENDS_ALL_ARRAY[@]}" -gt 0 ]]; then
+    echo -e "${CC_RED}Required plugins${CC_END}:"
+    mrcore_echo_error "$(mrcmd_lib_implode "," MRCMD_PLUGINS_DEPENDS_ALL_ARRAY[@])" "  "
+
+    echo -e "${CC_RED}Rejected plugins${CC_END}:"
+    mrcore_echo_error "$(mrcmd_lib_implode "," MRCMD_PLUGINS_LOADING_ARRAY[@])" "  "
+  fi
+
+  echo -e "${CC_YELLOW}Enabled shared plugins${CC_END} (${CC_YELLOW}value of${CC_END} MRCMD_SHARED_PLUGINS_ENABLED):"
+
+  pluginsAvailable=$(mrcmd_plugins_lib_get_plugins_available ${MRCMD_PLUGINS_DIR_INDEX_SHARED})
+
+  if [ -z "${pluginsAvailable}" ]; then
+    mrcore_echo_error "No shared plugins found in ${MRCMD_PLUGINS_DIR_ARRAY[${MRCMD_PLUGINS_DIR_INDEX_SHARED}]} directory" "  "
+  elif [[ "${MRCMD_SHARED_PLUGINS_ENABLED-}" == "${pluginsAvailable}" ]]; then
     mrcore_echo_ok "${pluginsAvailable}" "  "
   else
     if [ -n "${MRCMD_SHARED_PLUGINS_ENABLED-}" ]; then
       mrcore_echo_warning "${MRCMD_SHARED_PLUGINS_ENABLED}" "  "
     else
-      mrcore_echo_error "Var is not set" "  "
+      mrcore_echo_error "Var MRCMD_SHARED_PLUGINS_ENABLED is not set" "  "
     fi
 
     echo -e "${CC_YELLOW}Available shared plugins:${CC_END}"
     mrcore_echo_sample "${pluginsAvailable}" "  "
 
-    echo -e "For example, to enable all shared plugins, you need to add MRCMD_SHARED_PLUGINS_ENABLED to ${CC_BLUE}${APPX_DIR/}/.env${CC_END}:"
-    mrcore_echo_sample "MRCMD_SHARED_PLUGINS_ENABLED=\"${pluginsAvailable}\"" "  "
-    echo -e "And run ${MRCMD_INFO_NAME} with --env-file:"
-    mrcore_echo_sample "${MRCMD_INFO_NAME} --env-file .env" "  "
+    echo -e "For example, to enable \"pl\" and \"global\" shared plugins, you "
+    echo -e "need to add the following variable to ${CC_BLUE}${APPX_DIR}/.env${CC_END}:"
+    mrcore_echo_sample "MRCMD_SHARED_PLUGINS_ENABLED=\"pl,global\"" "  "
   fi
-}
 
-# private
-# using example: value=$(mrcmd_plugins_available_get_core_plugins_available)
-function mrcmd_plugins_available_get_core_plugins_available() {
-  local pluginName
-  local pluginsAvailable=""
-  local dirIndex=0
-  local i=0
+  if [ -n "${APPX_PLUGINS_DIR}" ]; then
+    echo -e "${CC_YELLOW}Enabled project plugins${CC_END}:"
 
-  for pluginName in "${MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
-  do
-    dirIndex=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${i}]}
-    i=$((i + 1))
+    pluginsAvailable=$(mrcmd_plugins_lib_get_plugins_available ${MRCMD_PLUGINS_DIR_INDEX_PROJECT})
 
-    if ! mrcmd_main_is_shared_dir_index ${dirIndex} ; then
-      continue
+    if [ -z "${pluginsAvailable}" ]; then
+      mrcore_echo_error "No project plugins found in ${APPX_PLUGINS_DIR} directory" "  "
+    else
+      mrcore_echo_ok "${pluginsAvailable}" "  "
     fi
+  else
+    mrcore_echo_sample "Run '${MRCMD_INFO_NAME} --plugins-dir ${APPX_DIR}/DIR' to include project plugins"
+  fi
 
-    pluginsAvailable="${pluginsAvailable},${pluginName}"
-  done
-
-  echo "${pluginsAvailable:1}"
+  if mrcmd_plugins_lib_is_enabled pm ; then
+    mrcore_echo_sample "Run '${MRCMD_INFO_NAME} pm all' for more details about available plugins"
+  fi
 }

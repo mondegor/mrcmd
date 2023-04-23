@@ -20,8 +20,8 @@ function mrcore_echo_error() {
 }
 
 function mrcore_echo_message() {
-  local ccColor=${1:-}
-  local message=${2:?}
+  local ccColor="${1:-}"
+  local message="${2:?}"
   local indent=${3-}
   local length=$((${#message} + 3))
 
@@ -37,25 +37,26 @@ function mrcore_echo_message() {
     echo -en "${indent}${ccColor}"
     mrcore_lib_repeat_string " " ${length}
     echo -e "${CC_END}"
-    echo ""
   else
     echo -e "${indent} ${message}"
   fi
+
+  echo ""
 }
 
 function mrcore_echo_var() {
-  local varName=${1:?}
-  local varValue=${2-}
-  local valueColor=${CC_RED}
+  local varName="${1:?}"
+  local varValue="${2-}"
+  local valueColor="${CC_RED}"
 
   if [ -z "${varValue}" ]; then
     varValue="NULL"
   elif [[ "${varValue}" =~ ^[0-9]+$ ]]; then
-    valueColor=${CC_BLUE}
+    valueColor="${CC_CYAN}"
   elif [[ "${varValue}" != true ]] && [[ "${varValue}" != false ]]; then
-    valueColor=${CC_RED}${CC_GREEN}
+    valueColor="${CC_GREEN}"
     varValue="\"${varValue}\""
   fi
 
-  echo -e "${CC_YELLOW}${varName}${CC_END} = ${valueColor}${varValue}${CC_END}"
+  echo -e "  ${varName} = ${valueColor}${varValue}${CC_END}"
 }

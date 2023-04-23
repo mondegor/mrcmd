@@ -26,20 +26,19 @@ function mrcore_debug_echo() {
   local level=${1:?}
 
   if [[ ${MRCORE_DEBUG_LEVEL} -ge ${level} ]]; then
-    local debugCC=${2-}
-    local message=${3:?}
+    local debugCC="${2-}"
+    local message="${3:?}"
 
     mrcore_echo_message "${debugCC}" "[DEBUG] ${message}"
   fi
 }
 
 function mrcore_debug_echo_call_function() {
-  local funcName=${1:?}
+  local funcName="${1:?}"
   shift
 
   local arguments="$@"
   mrcore_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_YELLOW}" "Call function: ${funcName}(${arguments})"
-
 }
 
 # using example: if mrcore_debug_level_validate "${level}" ; then
@@ -54,6 +53,6 @@ function mrcore_debug_level_validate() {
 }
 
 function mrcore_debug_echo_array() {
-  local array=("${!1:?}")
+  local array=("${!1:-}")
   declare -p array
 }

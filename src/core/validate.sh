@@ -1,54 +1,55 @@
 
+readonly REGEXP_PATTERN_NAME="^[a-zA-Z][a-zA-Z0-9]*$"
 readonly REGEXP_PATTERN_FILE_NAME="^[a-zA-Z0-9_.-]+$"
 readonly REGEXP_PATTERN_FILE_PREFIX="^[a-zA-Z0-9-]+$"
 
 function mrcore_validate_value_required() {
-  local CAPTION=${1:?}
-  local STR=${2-}
+  local caption="${1:?}"
+  local str="${2-}"
 
-  if [ -z "${STR}" ]; then
-    mrcore_echo_error "${CAPTION} required"
+  if [ -z "${str}" ]; then
+    mrcore_echo_error "${caption} required"
     ${EXIT_ERROR}
   fi
 }
 
 function mrcore_validate_value() {
-  local CAPTION=${1:?}
-  local PATTERN=${2:?}
-  local STR=${3:?}
+  local caption="${1:?}"
+  local pattern="${2:?}"
+  local str="${3:?}"
 
-  if [[ ! "${STR}" =~ ${PATTERN} ]]; then
-    mrcore_echo_error "${CAPTION} \"${STR}\" contains invalid characters, allowed characters: ${PATTERN}"
+  if [[ ! "${str}" =~ ${pattern} ]]; then
+    mrcore_echo_error "${caption} '${str}' contains invalid characters, allowed characters: ${pattern}"
     ${EXIT_ERROR}
   fi
 }
 
 function mrcore_validate_resource_exists() {
-  local CAPTION=${1:?}
-  local RESOURCE_PATH=${2:?}
+  local caption="${1:?}"
+  local resourcePath="${2:?}"
 
-  if [ -e "${RESOURCE_PATH}" ]; then
-    mrcore_echo_error "${CAPTION} ${RESOURCE_PATH} already exists"
+  if [ -e "${resourcePath}" ]; then
+    mrcore_echo_error "${caption} '${resourcePath}' already exists"
     ${EXIT_ERROR}
   fi
 }
 
 function mrcore_validate_file_required() {
-  local CAPTION=${1:?}
-  local FILE_PATH=${2:?}
+  local caption="${1:?}"
+  local filePath="${2:?}"
 
-  if [ ! -f "${FILE_PATH}" ]; then
-    mrcore_echo_error "${CAPTION} ${FILE_PATH} not found"
+  if [ ! -f "${filePath}" ]; then
+    mrcore_echo_error "${caption} '${filePath}' not found"
     ${EXIT_ERROR}
   fi
 }
 
 function mrcore_validate_dir_required() {
-  local CAPTION=${1:?}
-  local DIR_PATH=${2:?}
+  local caption="${1:?}"
+  local dirPath="${2:?}"
 
-  if [ ! -d "${DIR_PATH}" ]; then
-    mrcore_echo_error "${CAPTION} ${DIR_PATH} not found"
+  if [ ! -d "${dirPath}" ]; then
+    mrcore_echo_error "${caption} '${dirPath}' not found"
     ${EXIT_ERROR}
   fi
 }

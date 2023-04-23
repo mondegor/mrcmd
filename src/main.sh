@@ -14,7 +14,11 @@ function mrcmd_main_parse_args() {
   MRCMD_ARGS=()
 
   while :; do
-    case ${1-} in
+    if [[ -z "${1-}" ]]; then
+      return
+    fi
+
+    case ${1} in
 
       --debug)
         if ! mrcore_debug_level_validate "${2-}" ; then
@@ -60,10 +64,6 @@ function mrcmd_main_parse_args() {
         ;;
 
       *)
-        if [[ -z "${1-}" ]]; then
-          return
-        fi
-
         MRCMD_ARGS+=("${1}")
         ;;
     esac
@@ -98,76 +98,69 @@ function mrcmd_main_init_paths() {
   fi
 
   # пути к общим плагинам и скриптам, а также к плагинам и скриптам проекта
-  MRCMD_PLUGINS_DIR_ARRAY=("${MRCMD_DIR}/plugins" "${APPX_PLUGINS_DIR}")
+  readonly MRCMD_PLUGINS_DIR_ARRAY=("${MRCMD_DIR}/plugins" "${APPX_PLUGINS_DIR}")
+  readonly MRCMD_PLUGINS_DIR_INDEX_SHARED=0
+  readonly MRCMD_PLUGINS_DIR_INDEX_PROJECT=1
 }
 
 # private
 function mrcmd_main_exec {
-  local currentCommand=${1-}
+  local currentCommand="${1-}"
 
   if [ -n "${currentCommand}" ]; then
     shift
 
     case ${currentCommand} in
 
+      state)
+        mrcmd_help_exec_head
+        mrcmd_plugins_exec_state
+        return
+        ;;
+
       config | help)
-        local pluginName=${1-}
+        local pluginName="${1-}"
 
-        if [ -n "${pluginName}" ]; then
-          if mrcore_lib_in_array "${pluginName}" MRCMD_PLUGINS_LOADED_ARRAY[@] ; then
-            mrcmd_help_exec_head
-            mrcmd_plugins_exec_method "force" "${pluginName}" "${currentCommand}"
-            return
-          fi
-
-          currentCommand="${currentCommand} ${pluginName}"
-        else
-          mrcmd_${currentCommand}_exec
-          mrcmd_plugins_exec_group_methods "${currentCommand}"
+        if [ -z "${pluginName}" ]; then
+          mrcmd_${currentCommand}_GROUP_exec
           return
         fi
+
+        if mrcore_lib_in_array "${pluginName}" MRCMD_PLUGINS_LOADED_ARRAY[@] ; then
+          mrcmd_${currentCommand}_SINGLE_exec "${pluginName}"
+          return
+        fi
+
+        mrcore_echo_error "Plugin '${pluginName}' is unknown, command '${currentCommand}' not executed"
         ;;
 
       *)
-        if mrcore_lib_in_array "${currentCommand}" MRCMD_EXECUTABLE_PLUGIN_METHODS_ARRAY[@] ; then
-          mrcmd_plugins_exec_group_methods "${currentCommand}"
-          return
-        fi
+        if mrcore_lib_in_array "${currentCommand}" MRCMD_SYSTEM_PLUGIN_METHODS_ARRAY[@] ; then
+          local pluginName="${1-}"
 
-        if mrcore_lib_in_array "${currentCommand}" MRCMD_PLUGINS_LOADED_ARRAY[@] ; then
-          mrcmd_plugins_exec_method "normal" "${currentCommand}" "$@"
-          return
+          if [ -z "${pluginName}" ]; then
+            mrcmd_plugins_exec_GROUP_methods "${currentCommand}"
+            return
+          fi
+
+          if mrcore_lib_in_array "${pluginName}" MRCMD_PLUGINS_LOADED_ARRAY[@] ; then
+            mrcmd_plugins_exec_SINGLE_method "${pluginName}" "${currentCommand}"
+            return
+          fi
+
+          mrcore_echo_error "Plugin '${pluginName}' is unknown, command '${currentCommand}' not executed"
+        else
+          if mrcore_lib_in_array "${currentCommand}" MRCMD_PLUGINS_LOADED_ARRAY[@] ; then
+            mrcmd_plugins_exec_SINGLE_method "${currentCommand}" "$@"
+            return
+          fi
+
+          mrcore_echo_error "Command '${currentCommand}' is unknown"
         fi
         ;;
 
     esac
-
-    mrcore_echo_error "Command ${currentCommand} is unknown"
   fi
 
   mrcore_echo_sample "Run '${MRCMD_INFO_NAME} help' for usage"
-}
-
-# using example: if mrcmd_main_is_shared_dir_index "${dirArrayIndex}" ; then
-function mrcmd_main_is_shared_dir_index() {
-  local dirArrayIndex="${1:?}"
-  local constDirCoreIndex=0
-
-  if [[ ${dirArrayIndex} -eq ${constDirCoreIndex} ]]; then
-    ${RETURN_TRUE}
-  fi
-
-  ${RETURN_FALSE}
-}
-
-# using example: if mrcmd_main_is_project_dir_index "${dirArrayIndex}" ; then
-function mrcmd_main_is_project_dir_index() {
-  local dirArrayIndex="${1:?}"
-  local constDirProjectIndex=1
-
-  if [[ ${dirArrayIndex} -eq ${constDirProjectIndex} ]]; then
-    ${RETURN_TRUE}
-  fi
-
-  ${RETURN_FALSE}
 }
