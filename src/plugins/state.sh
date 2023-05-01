@@ -18,8 +18,10 @@ function mrcmd_plugins_exec_state() {
   echo ""
   echo ""
 
-  echo -e "${CC_GREEN}Loaded plugins${CC_END}:"
-  mrcore_echo_ok "$(mrcmd_lib_implode "," MRCMD_PLUGINS_LOADED_ARRAY[@])" "  "
+  if [[ "${#MRCMD_PLUGINS_LOADED_ARRAY[@]}" -gt 0 ]]; then
+    echo -e "${CC_GREEN}Loaded plugins${CC_END}:"
+    mrcore_echo_ok "$(mrcmd_lib_implode "," MRCMD_PLUGINS_LOADED_ARRAY[@])" "  "
+  fi
 
   if [[ "${#MRCMD_PLUGINS_DEPENDS_ALL_ARRAY[@]}" -gt 0 ]]; then
     echo -e "${CC_RED}Required plugins${CC_END}:"
@@ -47,9 +49,9 @@ function mrcmd_plugins_exec_state() {
     echo -e "${CC_YELLOW}Available shared plugins:${CC_END}"
     mrcore_echo_sample "${pluginsAvailable}" "  "
 
-    echo -e "For example, to enable \"pl\" and \"global\" shared plugins, you "
+    echo -e "For example, to enable \"pm\" and \"global\" shared plugins, you "
     echo -e "need to add the following variable to ${CC_BLUE}${APPX_DIR}/.env${CC_END}:"
-    mrcore_echo_sample "MRCMD_SHARED_PLUGINS_ENABLED=\"pl,global\"" "  "
+    mrcore_echo_sample "MRCMD_SHARED_PLUGINS_ENABLED=\"pm,global\"" "  "
   fi
 
   if [ -n "${APPX_PLUGINS_DIR}" ]; then
