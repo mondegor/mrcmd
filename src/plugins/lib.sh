@@ -43,12 +43,28 @@ function mrcmd_plugins_lib_is_enabled() {
   ${RETURN_FALSE}
 }
 
-# using example: $(mrcmd_plugins_lib_get_plugin_var_value "${pluginName}" "${varName}")
-function mrcmd_plugins_lib_get_plugin_var_value() {
+# using example: $(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "${varName}" value|count)
+function mrcmd_plugins_lib_get_plugin_var() {
   local pluginName="${1:?}"
   local varName="${2:?}"
-  pluginName=${pluginName//-/_}
-  eval local varValue="\"\${${pluginName^^}_${varName}}\""
+  local varType="${3:-scalar}"
 
-  echo "${varValue}"
+  pluginName=${pluginName//-/_}
+  varName="${pluginName^^}_${varName}"
+
+  case ${varType} in
+
+    scalar)
+      eval "echo \"\${${varName}-}\""
+      ;;
+
+    array_count)
+      eval "if [ -z \"\${${varName}-}\" ]; then
+              echo 0
+            else
+              echo \${#${varName}[@]}
+            fi"
+      ;;
+
+  esac
 }

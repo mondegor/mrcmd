@@ -21,11 +21,11 @@ function mrcore_dotenv_init() {
 
 function mrcore_dotenv_init_var() {
   local varName="${1:?}"
-  eval local varValue="\"\${${varName}-}\""
+  eval "local varValue=\"\${${varName}-}\""
 
   if [ -z "${varValue}" ]; then
     local varDefault="${2-}"
-    eval export ${varName}="\"${varDefault}\""
+    eval "export ${varName}=\"${varDefault}\""
   fi
 }
 
@@ -43,7 +43,7 @@ function mrcore_dotenv_init_var_array() {
 
 function mrcore_dotenv_echo_var() {
   local varName="${1:?}"
-  eval local varValue="\"\${${varName}-}\""
+  eval "local varValue=\"\${${varName}-}\""
 
   mrcore_echo_var "${varName}" "${varValue}"
 }
@@ -55,5 +55,22 @@ function mrcore_dotenv_echo_var_array() {
   for varName in "${varNames[@]}"
   do
     mrcore_dotenv_echo_var "${varName}"
+  done
+}
+
+function mrcore_dotenv_export_var() {
+  local varName="${1:?}"
+  eval "local varValue=\"\${${varName}-}\""
+
+  echo "# ${varName}=${varValue}" >>"${APPX_DIR}/.env.exported"
+}
+
+function mrcore_dotenv_export_var_array() {
+  local varNames=("${!1}")
+  local varName
+
+  for varName in "${varNames[@]}"
+  do
+    mrcore_dotenv_export_var "${varName}"
   done
 }

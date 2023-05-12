@@ -19,7 +19,7 @@ function mrcmd_help_GROUP_exec() {
   echo ""
   echo -e "${CC_YELLOW}Global options:${CC_END}"
   echo -e "  ${CC_BLUE}    --debug${CC_END} ${CC_CYAN}LEVEL${CC_END}        Enable debugging mode"
-  echo -e "                           ${CC_CYAN}LEVEL${CC_END} is 1, 2, 3, or 4"
+  echo -e "                           ${CC_CYAN}LEVEL${CC_END} is 0 - off, 1 - summary info, 2 - normal, or 3 - detailed"
   echo -e "  ${CC_BLUE}-n, --no-color${CC_END}           Produce monochrome output"
   echo -e "  ${CC_BLUE}-V, --verbose${CC_END}            Explain what is being done"
   echo -e "  ${CC_BLUE}-v, --version${CC_END}            Display version information and exit"
@@ -31,8 +31,8 @@ function mrcmd_help_GROUP_exec() {
   echo -e "  [${CC_BLUE}options${CC_END}] ${CC_GREEN}COMMAND${CC_END} [${CC_CYAN}PLUGIN${CC_END}]  ${CC_CYAN}PLUGIN${CC_END} is an enabled plugin"
   echo -e ""
   echo -e "  ${CC_GREEN}config${CC_END}          Display the project configuration"
-  echo -e "  ${CC_GREEN}export-config${CC_END}   Create ${CC_BLUE}.env${CC_END} file for the project with all"
-  echo -e "                  global variables of enabled plugins"
+  echo -e "  ${CC_GREEN}export-config${CC_END}   Create ${CC_BLUE}.env.exported${CC_END} file for the project"
+  echo -e "                  with all global variables of enabled plugins"
   echo -e "  ${CC_GREEN}install${CC_END}         Install the project"
   echo -e "  ${CC_GREEN}start${CC_END}           Start the project"
   echo -e "  ${CC_GREEN}stop${CC_END}            Stop the project"
@@ -56,7 +56,7 @@ function mrcmd_help_echo_GROUP_plugin_head() {
 
   echo -en "  ${CC_GREEN}${pluginName}${CC_END}"
   mrcore_lib_repeat_string " " ${length}
-  echo -e "$(mrcmd_plugins_lib_get_plugin_var_value "${pluginName}" "NAME")"
+  echo -e "$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME")"
 }
 
 function mrcmd_help_exec_head() {
@@ -87,7 +87,7 @@ function mrcmd_help_echo_SINGLE_plugin_head() {
 
   fullPluginMethodPrefix=$(mrcmd_plugins_lib_get_plugin_method_name "${pluginName}")
 
-  for pluginMethod in "${MRCMD_SYSTEM_PLUGIN_METHODS_ARRAY[@]}"
+  for pluginMethod in "${MRCMD_PLUGIN_METHODS_ARRAY[@]}"
   do
     if mrcore_lib_func_exists "${fullPluginMethodPrefix}${pluginMethod}" ; then
       pluginMethods="${pluginMethods}, ${pluginMethod}"

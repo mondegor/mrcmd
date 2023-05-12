@@ -18,5 +18,6 @@ function mrcmd_config_SINGLE_exec() {
 }
 
 function mrcmd_config_echo_SINGLE_plugin_head() {
-  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var_value "${pluginName}" "NAME") plugin config:${CC_END}"
+  local pluginName="${1:?}"
+  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME") plugin config:${CC_END}"
 }

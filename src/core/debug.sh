@@ -6,7 +6,6 @@ readonly DEBUG_LEVEL_0=0
 readonly DEBUG_LEVEL_1=1
 readonly DEBUG_LEVEL_2=2
 readonly DEBUG_LEVEL_3=3
-readonly DEBUG_LEVEL_4=4
 
 function mrcore_debug_init() {
   readonly DEBUG_RED=${CC_BG_RED}
@@ -45,7 +44,7 @@ function mrcore_debug_echo_call_function() {
 function mrcore_debug_level_validate() {
   local level=${1-}
 
-  if [[ "${level}" =~ ^[${DEBUG_LEVEL_0}-${DEBUG_LEVEL_4}]$ ]]; then
+  if [[ "${level}" =~ ^[${DEBUG_LEVEL_0}-${DEBUG_LEVEL_3}]$ ]]; then
     ${RETURN_TRUE}
   fi
 

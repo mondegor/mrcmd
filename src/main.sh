@@ -18,55 +18,59 @@ function mrcmd_main_parse_args() {
       return
     fi
 
-    case ${1} in
+    if [[ "${#MRCMD_ARGS[@]}" -gt 1 ]]; then
+      MRCMD_ARGS+=("${1}")
+    else
+      case "${1}" in
 
-      --debug)
-        if ! mrcore_debug_level_validate "${2-}" ; then
-          echo "--debug value: 0 - 4" 1>&2
-          ${EXIT_ERROR}
-        fi
+        --debug)
+          if ! mrcore_debug_level_validate "${2-}" ; then
+            echo "--debug value: 0 - 4" 1>&2
+            ${EXIT_ERROR}
+          fi
 
-        MRCORE_DEBUG_LEVEL="${2}"
-        shift
-        ;;
+          MRCORE_DEBUG_LEVEL="${2}"
+          shift
+          ;;
 
-      -n | --no-color)
-        MRCORE_USE_COLOR=false
-        ;;
+        -n | --no-color)
+          MRCORE_USE_COLOR=false
+          ;;
 
-      -V | --verbose)
-        MRCORE_VERBOSE=true
-        ;;
+        -V | --verbose)
+          MRCORE_VERBOSE=true
+          ;;
 
-      -v | --version)
-        echo -e "${MRCMD_INFO_CAPTION} version ${MRCMD_INFO_VERSION}"
-        ${EXIT_SUCCESS}
-        ;;
+        -v | --version)
+          echo -e "${MRCMD_INFO_CAPTION} version ${MRCMD_INFO_VERSION}"
+          ${EXIT_SUCCESS}
+          ;;
 
-      -d | --plugins-dir)
-        if [[ -z "${2-}" ]]; then
-          echo "-d --plugins-dir value: dir in $(realpath "${APPX_DIR}")/" 1>&2
-          ${EXIT_ERROR}
-        fi
+        -d | --plugins-dir)
+          if [[ -z "${2-}" ]]; then
+            echo "-d --plugins-dir value: dir in $(realpath "${APPX_DIR}")/" 1>&2
+            ${EXIT_ERROR}
+          fi
 
-        APPX_PLUGINS_DIR="${2}"
-        shift
-        ;;
+          APPX_PLUGINS_DIR="${2}"
+          shift
+          ;;
 
-      --env-file)
-        if [[ -z "${2-}" ]]; then
-          echo "--env-file value: file in $(realpath "${APPX_DIR}")/" 1>&2
-          ${EXIT_ERROR}
-        fi
+        --env-file)
+          if [[ -z "${2-}" ]]; then
+            echo "--env-file value: file in $(realpath "${APPX_DIR}")/" 1>&2
+            ${EXIT_ERROR}
+          fi
 
-        MRCORE_DOTENV_ARRAY+=("${APPX_DIR}/${2}")
-        shift
-        ;;
+          MRCORE_DOTENV_ARRAY+=("${APPX_DIR}/${2}")
+          shift
+          ;;
 
-      *)
-        MRCMD_ARGS+=("${1}")
-        ;;
-    esac
+        *)
+          MRCMD_ARGS+=("${1}")
+          ;;
+      esac
+    fi
 
     shift
   done
@@ -135,7 +139,7 @@ function mrcmd_main_exec {
         ;;
 
       *)
-        if mrcore_lib_in_array "${currentCommand}" MRCMD_SYSTEM_PLUGIN_METHODS_ARRAY[@] ; then
+        if mrcore_lib_in_array "${currentCommand}" MRCMD_PLUGIN_METHODS_ARRAY[@] ; then
           local pluginName="${1-}"
 
           if [ -z "${pluginName}" ]; then

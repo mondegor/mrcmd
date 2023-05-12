@@ -1,14 +1,15 @@
 
-readonly MRCMD_SYSTEM_PLUGIN_METHODS_ARRAY=("config" "export-config" "install" "start" "stop" "uninstall" "help")
+readonly MRCMD_PLUGIN_METHODS_ARRAY=("config" "export-config" "install" "start" "stop" "uninstall" "help")
+readonly MRCMD_PLUGIN_METHODS_SHOW_COMPLETED_ARRAY=("install" "start" "stop" "uninstall")
 
 function mrcmd_plugins_default_echo_GROUP_plugin_head() {
   local pluginName="${1:?}"
-  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var_value "${pluginName}" "NAME")${CC_END} (${CC_GREEN}${pluginName}${CC_END}):"
+  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME")${CC_END} (${CC_GREEN}${pluginName}${CC_END}):"
 }
 
 function mrcmd_plugins_default_echo_SINGLE_plugin_head() {
   local pluginName="${1:?}"
-  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var_value "${pluginName}" "NAME")${CC_END}:"
+  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME")${CC_END}:"
 }
 
 function mrcmd_plugins_exec_GROUP_methods() {
@@ -48,7 +49,7 @@ function mrcmd_plugins_exec_SINGLE_method() {
   shift
 
   if [ -n "${pluginMethod}" ]; then
-    if mrcore_lib_in_array "${pluginMethod}" MRCMD_SYSTEM_PLUGIN_METHODS_ARRAY[@]; then
+    if mrcore_lib_in_array "${pluginMethod}" MRCMD_PLUGIN_METHODS_ARRAY[@]; then
       pluginMethodProxy=${pluginMethod}
       shift
     fi
@@ -95,9 +96,7 @@ function mrcmd_plugins_exec_method() {
   mrcore_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_YELLOW}" "Exec method: ${fullPluginMethod}(${arguments})"
 
   if ${fullPluginMethod} "$@" ; then
-    if [[ "${pluginMethod}" != help ]] &&
-       [[ "${pluginMethod}" != config ]] &&
-       [[ "${pluginMethod}" != exec ]]; then
+    if mrcore_lib_in_array "${pluginMethod}" MRCMD_PLUGIN_METHODS_SHOW_COMPLETED_ARRAY[@] ; then
       mrcore_echo_notice "Command '${MRCMD_INFO_NAME} ${pluginName} ${pluginMethod}' completed"
     fi
     return
@@ -118,7 +117,7 @@ function mrcmd_plugins_exec_method_head() {
   local execType="${1:?}"
   local pluginName="${2:?}"
   local pluginMethod="${3:?}"
-  local fullPluginMethod="mrcmd_${pluginMethod}_echo_${execType}_plugin_head"
+  local fullPluginMethod="mrcmd_${pluginMethod//-/_}_echo_${execType}_plugin_head"
 
   if mrcore_lib_func_exists "${fullPluginMethod}" ; then
     mrcore_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_YELLOW}" "Exec method: ${fullPluginMethod}(${pluginName})"
