@@ -78,11 +78,30 @@ function mrcore_lib_string_to_uppercase() {
   echo "${str^^}"
 }
 
+# using example: $(mrcore_lib_flag_to_int "${string}")
+function mrcore_lib_flag_to_int() {
+  local flag="${1:?}"
+
+  case "${flag}" in
+    true | True | on | On | 1)
+      echo "1"
+      ;;
+
+    *)
+      echo "0"
+      ;;
+
+  esac
+}
+
 function mrcore_lib_mkdir() {
   local dirPath="${1:?}"
 
   if [ ! -d "${dirPath}" ]; then
-    mkdir -m 0755 "${dirPath}"
+    if ! mkdir -p -m 0755 "${dirPath}" ; then
+      ${EXIT_ERROR}
+    fi
+
     mrcore_echo_ok "Dir '${dirPath}' created"
   fi
 }
@@ -91,8 +110,11 @@ function mrcore_lib_rm() {
   local filePath="${1:?}"
 
   if [ -f "${filePath}" ]; then
-    rm "${filePath}"
-    mrcore_echo_error "File '${filePath}' removed"
+    if ! rm "${filePath}" ; then
+      ${EXIT_ERROR}
+    fi
+
+    mrcore_echo_warning "File '${filePath}' removed"
   fi
 }
 
@@ -100,8 +122,30 @@ function mrcore_lib_rmdir() {
   local dirPath="${1:?}"
 
   if [ -d "${dirPath}" ]; then
-    chmod -R 0777 "${dirPath}"
-    rm -R "${dirPath}"
-    mrcore_echo_error "Dir '${dirPath}' removed"
+    if ! chmod -R 0777 "${dirPath}" ; then
+      ${EXIT_ERROR}
+    fi
+
+    if ! rm -R "${dirPath}" ; then
+      ${EXIT_ERROR}
+    fi
+
+    mrcore_echo_warning "Dir '${dirPath}' removed"
   fi
+}
+
+function mrcore_lib_rm_resource() {
+  local resourcePath="${1:?}"
+
+  if [ -f "${resourcePath}" ]; then
+    mrcore_lib_rm "${resourcePath}"
+  else
+    mrcore_lib_rmdir "${resourcePath}"
+  fi
+}
+
+# using example: $(mrcmd_plugins_lib_get_var_value "${varName}")
+function mrcore_lib_get_var_value() {
+  local varName="${1:?}"
+  eval "echo \"\${${varName}-}\""
 }

@@ -8,7 +8,6 @@ function mrcmd_main_run() {
 # private
 function mrcmd_main_parse_args() {
   MRCORE_DOTENV_ARRAY=()
-  APPX_PLUGINS_DIR=""
 
   # args without options
   MRCMD_ARGS=()
@@ -18,7 +17,7 @@ function mrcmd_main_parse_args() {
       return
     fi
 
-    if [[ "${#MRCMD_ARGS[@]}" -gt 1 ]]; then
+    if [[ "${#MRCMD_ARGS[@]}" -gt 0 ]]; then
       MRCMD_ARGS+=("${1}")
     else
       case "${1}" in
@@ -46,9 +45,19 @@ function mrcmd_main_parse_args() {
           ${EXIT_SUCCESS}
           ;;
 
+        --shared-plugins-dir)
+          if [[ -z "${2-}" ]]; then
+            echo "--shared-plugins-dir value: dir for shared plugins" 1>&2
+            ${EXIT_ERROR}
+          fi
+
+          MRCMD_PLUGINS_DIR="${2}"
+          shift
+          ;;
+
         -d | --plugins-dir)
           if [[ -z "${2-}" ]]; then
-            echo "-d --plugins-dir value: dir in $(realpath "${APPX_DIR}")/" 1>&2
+            echo "-d --plugins-dir value: dir in ${APPX_DIR_REAL}/" 1>&2
             ${EXIT_ERROR}
           fi
 
@@ -58,7 +67,7 @@ function mrcmd_main_parse_args() {
 
         --env-file)
           if [[ -z "${2-}" ]]; then
-            echo "--env-file value: file in $(realpath "${APPX_DIR}")/" 1>&2
+            echo "--env-file value: file in ${APPX_DIR_REAL}/" 1>&2
             ${EXIT_ERROR}
           fi
 
@@ -80,7 +89,7 @@ function mrcmd_main_parse_args() {
 function mrcmd_main_init() {
   mrcore_colors_init
   mrcore_debug_init
-  mrcore_tty_init
+  mrcore_os_init
   mrcore_dotenv_init
   mrcmd_main_init_paths
   mrcmd_plugins_init
@@ -88,7 +97,7 @@ function mrcmd_main_init() {
 
 # private
 function mrcmd_main_init_paths() {
-  mrcore_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_GREEN}" "Current run path: $(realpath "${APPX_DIR}")"
+  mrcore_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_GREEN}" "Current run path: ${APPX_DIR_REAL}"
 
   if [ -n "${APPX_PLUGINS_DIR}" ]; then
     APPX_PLUGINS_DIR="${APPX_DIR}/${APPX_PLUGINS_DIR}"
@@ -102,7 +111,7 @@ function mrcmd_main_init_paths() {
   fi
 
   # пути к общим плагинам и скриптам, а также к плагинам и скриптам проекта
-  readonly MRCMD_PLUGINS_DIR_ARRAY=("${MRCMD_DIR}/plugins" "${APPX_PLUGINS_DIR}")
+  readonly MRCMD_PLUGINS_DIR_ARRAY=("${MRCMD_PLUGINS_DIR}" "${APPX_PLUGINS_DIR}")
   readonly MRCMD_PLUGINS_DIR_INDEX_SHARED=0
   readonly MRCMD_PLUGINS_DIR_INDEX_PROJECT=1
 }
@@ -114,7 +123,7 @@ function mrcmd_main_exec {
   if [ -n "${currentCommand}" ]; then
     shift
 
-    case ${currentCommand} in
+    case "${currentCommand}" in
 
       state)
         mrcmd_help_exec_head

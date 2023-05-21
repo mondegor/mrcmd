@@ -52,7 +52,7 @@ function mrcmd_plugins_lib_get_plugin_var() {
   pluginName=${pluginName//-/_}
   varName="${pluginName^^}_${varName}"
 
-  case ${varType} in
+  case "${varType}" in
 
     scalar)
       eval "echo \"\${${varName}-}\""

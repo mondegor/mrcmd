@@ -2,6 +2,7 @@
 readonly REGEXP_PATTERN_NAME="^[a-zA-Z][a-zA-Z0-9]*$"
 readonly REGEXP_PATTERN_FILE_NAME="^[a-zA-Z0-9_.-]+$"
 readonly REGEXP_PATTERN_FILE_PREFIX="^[a-zA-Z0-9-]+$"
+readonly REGEXP_PATTERN_URL="^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$"
 
 function mrcore_validate_value_required() {
   local caption="${1:?}"
@@ -30,6 +31,16 @@ function mrcore_validate_resource_exists() {
 
   if [ -e "${resourcePath}" ]; then
     mrcore_echo_error "${caption} '${resourcePath}' already exists"
+    ${EXIT_ERROR}
+  fi
+}
+
+function mrcore_validate_resource_required() {
+  local caption="${1:?}"
+  local resourcePath="${2:?}"
+
+  if [ ! -e "${resourcePath}" ]; then
+    mrcore_echo_error "${caption} '${resourcePath}' not found"
     ${EXIT_ERROR}
   fi
 }

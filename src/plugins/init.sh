@@ -1,5 +1,5 @@
 
-export MRCMD_SHARED_PLUGINS_ENABLED
+MRCMD_SHARED_PLUGINS_ENABLED=""
 
 function mrcmd_plugins_init() {
   mrcore_debug_echo_call_function "${FUNCNAME[0]}"

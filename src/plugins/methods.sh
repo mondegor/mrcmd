@@ -4,12 +4,12 @@ readonly MRCMD_PLUGIN_METHODS_SHOW_COMPLETED_ARRAY=("install" "start" "stop" "un
 
 function mrcmd_plugins_default_echo_GROUP_plugin_head() {
   local pluginName="${1:?}"
-  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME")${CC_END} (${CC_GREEN}${pluginName}${CC_END}):"
+  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "CAPTION")${CC_END} (${CC_GREEN}${pluginName}${CC_END}):"
 }
 
 function mrcmd_plugins_default_echo_SINGLE_plugin_head() {
   local pluginName="${1:?}"
-  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME")${CC_END}:"
+  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "CAPTION")${CC_END}:"
 }
 
 function mrcmd_plugins_exec_GROUP_methods() {

@@ -25,3 +25,14 @@ function mrcore_import() {
     ${EXIT_ERROR}
   fi
 }
+
+# using example: $(mrcore_get_shell "${shellName}")
+function mrcore_get_shell() {
+  local shellName="${1-}"
+
+  if [[ "${shellName}" != "sh" ]] && [[ "${shellName}" != "bash" ]]; then
+    shellName="sh"
+  fi
+
+  echo "${shellName}"
+}

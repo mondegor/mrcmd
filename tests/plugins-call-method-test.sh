@@ -35,6 +35,10 @@ function mrcmd_plugins_exec_method_if_exists_test() {
     ${RETURN_TRUE}
   }
 
+  function mrcore_lib_in_array {
+    ${RETURN_TRUE}
+  }
+
   function mrcmd_plugins_lib_get_plugin_method_name() {
     echo "mrcmd_plugins_pluginName_method_pluginMethodExists"
   }
@@ -122,6 +126,10 @@ function mrcmd_plugins_exec_method_if_unknown_error_test() {
 
 function mrcmd_plugins_exec_method_if_call_head_test() {
   function mrcore_lib_func_exists() {
+    ${RETURN_TRUE}
+  }
+
+  function mrcore_lib_in_array {
     ${RETURN_TRUE}
   }
 

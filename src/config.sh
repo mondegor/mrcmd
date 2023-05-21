@@ -19,5 +19,5 @@ function mrcmd_config_SINGLE_exec() {
 
 function mrcmd_config_echo_SINGLE_plugin_head() {
   local pluginName="${1:?}"
-  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "NAME") plugin config:${CC_END}"
+  echo -e "${CC_YELLOW}$(mrcmd_plugins_lib_get_plugin_var "${pluginName}" "CAPTION") plugin config:${CC_END}"
 }

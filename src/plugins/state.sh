@@ -4,8 +4,10 @@ function mrcmd_plugins_exec_state() {
 
   local pluginsAvailable
 
-  echo -e "${CC_YELLOW}${MRCMD_INFO_CAPTION} path${CC_END}: ${CC_BLUE}$(realpath "${MRCMD_DIR}")${CC_END}"
-  echo -e "${CC_YELLOW}Project path${CC_END}: ${CC_BLUE}$(realpath "${APPX_DIR}")${CC_END}"
+  echo -e "${CC_YELLOW}${MRCMD_INFO_CAPTION} path${CC_END}: ${CC_BLUE}${MRCMD_DIR}${CC_END}"
+  echo -e "${CC_YELLOW}Project path${CC_END}: ${CC_BLUE}${APPX_DIR_REAL}${CC_END}"
+  echo -e "${CC_YELLOW}Shared plugins path${CC_END}: ${CC_BLUE}${MRCMD_PLUGINS_DIR}${CC_END}"
+  echo -e "${CC_YELLOW}Project plugins path${CC_END}: ${CC_BLUE}${APPX_PLUGINS_DIR}${CC_END}"
   echo ""
   echo -en "${CC_YELLOW}Available plugins${CC_END}: ${#MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
   echo -en ", ${CC_GREEN}Loaded${CC_END}: ${#MRCMD_PLUGINS_LOADED_ARRAY[@]}"

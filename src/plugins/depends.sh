@@ -48,7 +48,7 @@ function mrcmd_plugins_depends_merge() {
   done
 }
 
-mrcmd_plugins_depends_remove_plugin() {
+function mrcmd_plugins_depends_remove_plugin() {
   local pluginName="${1:?}"
   local item
   local tmp=()
