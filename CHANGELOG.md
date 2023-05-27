@@ -2,6 +2,11 @@
 
 Все изменения в Mrcmd будут документироваться на этой странице.
 
+## 2023-05-27
+### Added
+- В функциях валидации разрешено задавать пустые параметры;
+- В .editorconfig добавлены xml, xslt, puml форматы;
+
 ## 2023-05-21
 ### Added
 - Добавлены функции: mrcore_get_shell, mrcore_lib_flag_to_int, mrcore_lib_rm_resource, mrcore_lib_get_var_value, mrcore_os_path_win_to_unix, mrcore_validate_resource_required;
@@ -15,7 +20,7 @@
 
 ### Fixed
 - Исправлено несколько тестов;
-- Добавлена отсутствующий оператор function у некоторых методов;
+- Добавлен отсутствующий оператор function у некоторых методов;
 
 ### Removed
 - Удалён export в тех переменных, в которых он был не нужен;
