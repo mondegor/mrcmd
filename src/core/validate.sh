@@ -6,7 +6,7 @@ readonly REGEXP_PATTERN_URL="^[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256
 
 function mrcore_validate_value_required() {
   local caption="${1:?}"
-  local str="${2-}"
+  local str="${2?}"
 
   if [ -z "${str}" ]; then
     mrcore_echo_error "${caption} required"
@@ -17,7 +17,7 @@ function mrcore_validate_value_required() {
 function mrcore_validate_value() {
   local caption="${1:?}"
   local pattern="${2:?}"
-  local str="${3:?}"
+  local str="${3?}"
 
   if [[ ! "${str}" =~ ${pattern} ]]; then
     mrcore_echo_error "${caption} '${str}' contains invalid characters, allowed characters: ${pattern}"
@@ -27,7 +27,7 @@ function mrcore_validate_value() {
 
 function mrcore_validate_resource_exists() {
   local caption="${1:?}"
-  local resourcePath="${2:?}"
+  local resourcePath="${2?}"
 
   if [ -e "${resourcePath}" ]; then
     mrcore_echo_error "${caption} '${resourcePath}' already exists"
@@ -37,7 +37,7 @@ function mrcore_validate_resource_exists() {
 
 function mrcore_validate_resource_required() {
   local caption="${1:?}"
-  local resourcePath="${2:?}"
+  local resourcePath="${2?}"
 
   if [ ! -e "${resourcePath}" ]; then
     mrcore_echo_error "${caption} '${resourcePath}' not found"
@@ -47,7 +47,7 @@ function mrcore_validate_resource_required() {
 
 function mrcore_validate_file_required() {
   local caption="${1:?}"
-  local filePath="${2:?}"
+  local filePath="${2?}"
 
   if [ ! -f "${filePath}" ]; then
     mrcore_echo_error "${caption} '${filePath}' not found"
@@ -57,7 +57,7 @@ function mrcore_validate_file_required() {
 
 function mrcore_validate_dir_required() {
   local caption="${1:?}"
-  local dirPath="${2:?}"
+  local dirPath="${2?}"
 
   if [ ! -d "${dirPath}" ]; then
     mrcore_echo_error "${caption} '${dirPath}' not found"
