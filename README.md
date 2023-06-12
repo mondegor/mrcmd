@@ -7,11 +7,11 @@
 ## Быстрый старт
 
 > Для Windows два пути использования утилиты:
-> - WSL2, инструкция по установке находится [здесь](https://github.com/mondegor/mrcmd-plugins/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
+> - WSL2, инструкция по установке находится [здесь](https://github.com/mondegor/mrcmd/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
 > - GitBash, скачать можно [здесь](https://git-scm.com/download/win);
 
 > Для большинства плагинов утилиты требуется установка Docker
-> - [для Windows](https://www.docker.com/products/docker-desktop/) либо [WSL2+Docker](https://github.com/mondegor/mrcmd-plugins/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
+> - [для Windows](https://www.docker.com/products/docker-desktop/) либо [WSL2+Docker](https://github.com/mondegor/mrcmd/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
 > - [для Linux](https://docs.docker.com/desktop/install/linux-install/);
 
 ### Инсталляция утилиты
