@@ -1,8 +1,4 @@
 
-# shared vars, only for mrcmd_plugins_call_function
-MRCMD_CURRENT_PLUGINS_DIR=""
-MRCMD_CURRENT_PLUGIN_NAME=""
-
 function mrcmd_plugins_call_function() {
   mrcore_debug_echo_call_function "${FUNCNAME[0]}" "$@"
 
@@ -12,12 +8,12 @@ function mrcmd_plugins_call_function() {
   local pluginsDir
   local scriptFunc="mrcmd_func_${scriptPath//[\/-]/_}"
   local currentPluginName=${scriptPath%%/*}
-  local currentPluginsDir
+  local currentPluginDir
   local i=0
 
   for pluginsDir in "${MRCMD_PLUGINS_DIR_ARRAY[@]}"
   do
-    currentPluginsDir="${pluginsDir}"
+    currentPluginDir="${pluginsDir}/${currentPluginName}"
     local tmpPath="${pluginsDir}/${scriptPath}.sh"
 
     if [ -f "${tmpPath}" ]; then
@@ -46,18 +42,31 @@ function mrcmd_plugins_call_function() {
     fi
   fi
 
+  mrcmd_plugins_call_function_exec "${scriptFunc}" "$@"
+}
+
+#private
+function mrcmd_plugins_call_function_exec() {
+  local scriptPath="${1:?}"
+  shift
+
   mrcore_debug_echo_call_function "${scriptFunc}" "$@"
 
   # store current context
-  local oldCurrentPluginName=${MRCMD_CURRENT_PLUGIN_NAME}
-  local oldCurrentPluginsDir=${MRCMD_CURRENT_PLUGINS_DIR}
+  local oldCurrentPluginDir="${MRCMD_CURRENT_PLUGIN_DIR}"
+  MRCMD_CURRENT_PLUGIN_DIR="${currentPluginDir}"
+  local scriptFuncResult=false
 
-  MRCMD_CURRENT_PLUGIN_NAME=${currentPluginName}
-  MRCMD_CURRENT_PLUGINS_DIR=${currentPluginsDir}
-
-  ${scriptFunc} "$@"
+  if ${scriptFunc} "$@" ; then
+    scriptFuncResult=true
+  fi
 
   # restore current context
-  MRCMD_CURRENT_PLUGIN_NAME=${oldCurrentPluginName}
-  MRCMD_CURRENT_PLUGINS_DIR=${oldCurrentPluginsDir}
+  MRCMD_CURRENT_PLUGIN_DIR="${oldCurrentPluginDir}"
+
+  if [[ "${scriptFuncResult}" == true ]]; then
+    ${RETURN_TRUE}
+  fi
+
+  ${RETURN_FALSE}
 }

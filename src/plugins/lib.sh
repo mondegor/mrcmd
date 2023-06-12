@@ -7,9 +7,10 @@ function mrcmd_plugins_lib_get_plugin_method_name() {
   echo "mrcmd_plugins_${pluginName//[\/-]/_}_method_${pluginMethod//-/_}"
 }
 
-# using example: value=$(mrcmd_plugins_lib_get_plugins_available)
+# using example: value=$(mrcmd_plugins_lib_get_plugins_available "${filterDirIndex}")
 function mrcmd_plugins_lib_get_plugins_available() {
   local filterDirIndex=${1:?}
+  local excludedPlugins=("${!2-}")
   local pluginName
   local pluginsAvailable=""
   local dirIndex=0
@@ -20,12 +21,37 @@ function mrcmd_plugins_lib_get_plugins_available() {
     dirIndex=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${i}]}
     i=$((i + 1))
 
+    if [ ${#excludedPlugins} -gt 0 ] && mrcore_lib_in_array "${pluginName}" excludedPlugins[@] ; then
+      continue
+    fi
+
     if [[ ${dirIndex} -eq ${filterDirIndex} ]]; then
       pluginsAvailable="${pluginsAvailable},${pluginName}"
     fi
   done
 
   echo "${pluginsAvailable:1}"
+}
+
+# using example: value=$(mrcmd_plugins_lib_get_plugin_dir "${pluginName}")
+function mrcmd_plugins_lib_get_plugin_dir() {
+  local pluginName=${1:?}
+  local curPluginName
+  local i=0
+
+  for curPluginName in "${MRCMD_PLUGINS_AVAILABLE_ARRAY[@]}"
+  do
+    dirIndex=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${i}]}
+
+    if [[ "${pluginName}" == "${curPluginName}" ]]; then
+      echo "${MRCMD_PLUGINS_DIR_ARRAY[${dirIndex}]}/${pluginName}"
+      return
+    fi
+
+    i=$((i + 1))
+  done
+
+  echo ""
 }
 
 # using example: if mrcmd_plugins_lib_is_enabled "${pluginName}" ; then

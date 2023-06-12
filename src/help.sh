@@ -27,28 +27,36 @@ function mrcmd_help_GROUP_exec() {
   echo -e "  ${CC_BLUE}-v, --version${CC_END}             Display version information and exit"
   echo ""
   echo -e "${CC_YELLOW}Commands:${CC_END}"
-  echo -e "  ${CC_GREEN}state${CC_END}       Current state of the project"
+  echo -e "  ${CC_GREEN}init${CC_END} [${CC_CYAN}PLUGINS_DIR${CC_END}]        Initialize a new ${MRCMD_INFO_CAPTION} project in current directory"
+  echo -e "                            ${CC_CYAN}PLUGINS_DIR${CC_END} is path to shared plugins"
+
+  echo -e "  ${CC_GREEN}state${CC_END}                     Current state of the project"
   echo ""
   echo -e "${CC_YELLOW}Group commands:${CC_END}"
   echo -e "  [${CC_BLUE}options${CC_END}] ${CC_GREEN}COMMAND${CC_END} [${CC_CYAN}PLUGIN${CC_END}]  ${CC_CYAN}PLUGIN${CC_END} is an enabled plugin"
   echo -e ""
   echo -e "  ${CC_GREEN}config${CC_END}              Display the project configuration"
-  echo -e "  ${CC_GREEN}export-config${CC_END}       Create ${CC_BLUE}.env.exported${CC_END} file for the project"
-  echo -e "                      with all global variables of enabled plugins"
+  echo -e "  ${CC_GREEN}export-config${CC_END}       Create ${CC_BLUE}${MRCORE_DOTENV_EXPORTED}${CC_END} with all global"
+  echo -e "                      variables of enabled plugins"
   echo -e "  ${CC_GREEN}install${CC_END}             Install the project"
   echo -e "  ${CC_GREEN}start${CC_END}               Start the project"
   echo -e "  ${CC_GREEN}stop${CC_END}                Stop the project"
   echo -e "  ${CC_GREEN}uninstall${CC_END}           Remove all project resources created during installation"
   echo -e "  ${CC_GREEN}help${CC_END}                Display this help text or help for the specified plugin"
   echo ""
-  echo -e "${CC_YELLOW}Enabled plugins:${CC_END}"
 
-  for pluginName in "${MRCMD_PLUGINS_LOADED_ARRAY[@]}"
-  do
-    mrcmd_help_echo_GROUP_plugin_head "${pluginName}"
-  done
+  if [[ ${#MRCMD_PLUGINS_LOADED_ARRAY[@]} -gt 0 ]]; then
+    echo -e "${CC_YELLOW}Enabled plugins:${CC_END}"
 
-  mrcore_echo_sample "Run '${MRCMD_INFO_NAME} state' for more detailed information about the project"
+    for pluginName in "${MRCMD_PLUGINS_LOADED_ARRAY[@]}"
+    do
+      mrcmd_help_echo_GROUP_plugin_head "${pluginName}"
+    done
+  else
+    mrcore_echo_error "No plugins are enabled"
+  fi
+
+  mrcore_echo_sample "Run '${MRCMD_INFO_NAME} state' for more information about the project"
 }
 
 function mrcmd_help_echo_GROUP_plugin_head() {

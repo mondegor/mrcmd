@@ -8,12 +8,10 @@ function mrcmd_export_config_echo_GROUP_plugin_head() {
 
   if [[ ${varsCount} -gt 0 ]]; then
     if mrcmd_export_config_is_first_row ; then
-      echo -e "# System global vars: \${MRCMD_DIR}, \${MRCMD_PLUGINS_DIR}, \${APPX_DIR}, \${APPX_PLUGINS_DIR}, \${CMD_SEPARATOR}" \
-        >> "${APPX_DIR}/.env.exported"
+      mrcore_echo_ok "Export enabled plugins config to '${MRCORE_DOTENV_EXPORTED}'"
     fi
 
-    echo -e "\n## ${pluginCaption}:" >> "${APPX_DIR}/.env.exported"
-
+    cat >> "${MRCORE_DOTENV_EXPORTED}" <<< "$(echo -e "\n## ${pluginCaption}:")"
     echo -e "${CC_YELLOW}${pluginCaption}${CC_END} (${CC_GREEN}${pluginName}${CC_END}) exported: ${varsCount} vars"
   else
     echo -e "${CC_YELLOW}${pluginName} vars not found${CC_END}"

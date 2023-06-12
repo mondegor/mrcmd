@@ -1,4 +1,5 @@
 
+readonly MRCMD_SHARED_PLUGINS_DIR_DEFAULT="${MRCMD_DIR}/plugins"
 MRCMD_SHARED_PLUGINS_ENABLED=""
 
 function mrcmd_plugins_init() {
@@ -78,6 +79,9 @@ function mrcmd_plugins_load() {
         continue
       fi
 
+      MRCMD_PLUGINS_AVAILABLE_ARRAY+=("${pluginName}")
+      MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY+=("${i}")
+
       if [[ ${MRCMD_PLUGINS_DIR_INDEX_PROJECT} -eq ${i} ]] ||
          mrcore_lib_in_array "${pluginName}" MRCMD_SHARED_PLUGINS_ENABLED_ARRAY[@] ; then
 
@@ -88,16 +92,13 @@ function mrcmd_plugins_load() {
       else
         mrcore_debug_echo ${DEBUG_LEVEL_3} "${DEBUG_RED}" "Plugin: ${pluginPath} [disabled]"
       fi
-
-      MRCMD_PLUGINS_AVAILABLE_ARRAY+=("${pluginName}")
-      MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY+=("${i}")
     done
 
     i=$((i + 1))
   done
 
   while :; do
-    if [[ "${#MRCMD_PLUGINS_LOADING_ARRAY[@]}" -le 0 ]]; then
+    if [[ ${#MRCMD_PLUGINS_LOADING_ARRAY[@]} -le 0 ]]; then
       return
     fi
 
@@ -111,7 +112,7 @@ function mrcmd_plugins_load() {
       mrcmd_plugins_load_if_depends_loaded "${pluginName}"
     done
 
-    if [[ "${#MRCMD_PLUGINS_LOADING_ARRAY[@]}" -ge ${#pluginsLoadingArray[@]} ]]; then
+    if [[ ${#MRCMD_PLUGINS_LOADING_ARRAY[@]} -ge ${#pluginsLoadingArray[@]} ]]; then
       return
     fi
   done
@@ -128,7 +129,7 @@ function mrcmd_plugins_load_if_depends_loaded() {
   mrcmd_plugins_depends_plugin_load_depends "${pluginName}"
   mrcmd_plugins_depends_plugin_clean_depends
 
-  if [ "${#MRCMD_PLUGIN_DEPENDS_ARRAY[@]}" -eq 0 ]; then
+  if [ ${#MRCMD_PLUGIN_DEPENDS_ARRAY[@]} -eq 0 ]; then
     if mrcmd_plugins_load_if_initialized "${pluginName}" ; then
       mrcmd_plugins_depends_remove_plugin "${pluginName}"
     fi
@@ -148,10 +149,14 @@ function mrcmd_plugins_load_if_initialized() {
   if mrcore_lib_func_exists "${fullPluginMethod}" ; then
     mrcore_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_YELLOW}" "Exec method: ${fullPluginMethod}()"
 
+    MRCMD_CURRENT_PLUGIN_DIR="$(mrcmd_plugins_lib_get_plugin_dir "${pluginName}")"
+
     if "${fullPluginMethod}" ; then
       MRCMD_PLUGINS_LOADED_ARRAY+=("${pluginName}")
       ${RETURN_TRUE}
     fi
+
+    MRCMD_CURRENT_PLUGIN_DIR=""
 
     mrcore_echo_error "Plugin method ${fullPluginMethod}() not initialized"
   else
@@ -159,23 +164,4 @@ function mrcmd_plugins_load_if_initialized() {
   fi
 
   ${RETURN_FALSE}
-}
-
-# private
-function mrcmd_plugins_load_init_methods() {
-  local pluginName="${1:?}"
-  local fullPluginMethod
-
-  fullPluginMethod=$(mrcmd_plugins_lib_get_plugin_method_name "${pluginName}" "init")
-
-  if mrcore_lib_func_exists "${fullPluginMethod}" ; then
-    mrcore_debug_echo ${DEBUG_LEVEL_2} "${DEBUG_YELLOW}" "Exec method: ${fullPluginMethod}()"
-
-    if ! "${fullPluginMethod}" ; then
-      ${RETURN_FALSE}
-    fi
-  else
-    mrcore_echo_error "Plugin method ${fullPluginMethod}() not found"
-    ${RETURN_FALSE}
-  fi
 }
