@@ -113,8 +113,8 @@ function mrcmd_main_init_paths() {
     mrcore_validate_dir_required "${MRCMD_INFO_CAPTION} shared plugins directory" "${MRCMD_PLUGINS_DIR}"
     MRCMD_PLUGINS_DIR="$(realpath "${MRCMD_PLUGINS_DIR}")"
 
-    if [[ "${MRCMD_PLUGINS_DIR}/" == "${APPX_DIR_REAL}/"* ]]; then
-      mrcore_echo_error "${MRCMD_INFO_CAPTION} shared plugins cannot run from project dir and its subdirectories"
+    if [[ "${APPX_DIR_REAL}/" == "${MRCMD_PLUGINS_DIR}/"* ]]; then
+      mrcore_echo_error "Project cannot run from ${MRCMD_INFO_CAPTION} shared plugins dir and its subdirectories"
       ${EXIT_ERROR}
     fi
   fi

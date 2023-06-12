@@ -1,4 +1,4 @@
-# Mrcmd Tool v0.5.0
+# Mrcmd Tool v0.5.1
 Этот репозиторий содержит Mrcmd утилиту для группировки и запуска unix утилит, консольных скриптов и т.д.
 
 ## Статус проекта
@@ -10,28 +10,28 @@
 > - WSL2, инструкция по установке находится [здесь](https://github.com/mondegor/mrcmd/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
 > - GitBash, скачать можно [здесь](https://git-scm.com/download/win);
 
-> Для большинства плагинов утилиты требуется установка Docker
-> - [для Windows](https://www.docker.com/products/docker-desktop/) либо [WSL2+Docker](https://github.com/mondegor/mrcmd/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
+> Для большинства плагинов утилиты требуется установка Docker:
+> - [для Windows](https://www.docker.com/products/docker-desktop/) либо [для WSL2](https://github.com/mondegor/mrcmd/blob/master/docs/WIN_WSL_DOCKER_GUIDE.md);
 > - [для Linux](https://docs.docker.com/desktop/install/linux-install/);
 
 ### Инсталляция утилиты
 - `cd {PARENT_DIR}` // сначала перейти в директорию, где будет расположена утилита
 - `curl -L -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip`
-- `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd`
-- `bash ./mrcmd/register.sh` (for Linux)
+- `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd && chmod +x ./mrcmd/cmd.sh`
+- `sudo bash ./mrcmd/register.sh` (for Linux)
 - `register.bat` (for Windows, ВНИМАНИЕ: запускать из PowerShell или проводника под админом)
-- `mrcmd state`
+- `mrcmd state` // проверка, что утилита была установлена
 
 ### Инсталляция базовых плагинов
 - `cd mrcmd`
 - `curl -L -o mrcmd-plugins.zip https://github.com/mondegor/mrcmd-plugins/archive/refs/tags/latest.zip`
 - `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest plugins`
-- `mrcmd state`
+- `mrcmd state` // проверка, что плагины утилиты были установлены
 
-### Создание нового проекта
-- `mkdir test-project`
-- `cd test-project`
+### Инициализация нового проекта
+- `cd ../ && mkdir test-project && cd test-project`
 - `mrcmd init`
+- `mrcmd state` // проверка, что проект был инициализирован
 
 ## Основные команды
 - `mrcmd help` - помощь в контексте текущего проекта;
