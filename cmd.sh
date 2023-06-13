@@ -5,6 +5,9 @@ readonly MRCMD_DIR=$(realpath "${BASH_SOURCE[0]}" | xargs dirname)
 readonly APPX_DIR="."
 readonly APPX_DIR_REAL=$(realpath "${APPX_DIR}")
 
+MRCMD_PLUGINS_DIR=""
+APPX_PLUGINS_DIR=""
+
 source "${MRCMD_DIR}/src/core/bash.sh"
 source "${MRCMD_DIR}/src/core/colors.sh"
 source "${MRCMD_DIR}/src/core/debug.sh"

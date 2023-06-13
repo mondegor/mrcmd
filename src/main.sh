@@ -101,9 +101,7 @@ function mrcmd_main_init_paths() {
 
   if [ -n "${ARGS_MRCMD_PLUGINS_DIR-}" ]; then
     MRCMD_PLUGINS_DIR=${ARGS_MRCMD_PLUGINS_DIR}
-  elif [ -z "${MRCMD_PLUGINS_DIR-}" ]; then
-    MRCMD_PLUGINS_DIR=""
-
+  elif [ -z "${MRCMD_PLUGINS_DIR}" ]; then
     if [ -d "${MRCMD_SHARED_PLUGINS_DIR_DEFAULT}" ]; then
       MRCMD_PLUGINS_DIR="${MRCMD_SHARED_PLUGINS_DIR_DEFAULT}"
     fi
@@ -123,7 +121,7 @@ function mrcmd_main_init_paths() {
     APPX_PLUGINS_DIR=${ARGS_APPX_PLUGINS_DIR}
   fi
 
-  if [ -n "${APPX_PLUGINS_DIR-}" ]; then
+  if [ -n "${APPX_PLUGINS_DIR}" ]; then
     mrcore_validate_dir_required "${MRCMD_INFO_CAPTION} plugins directory" "${APPX_PLUGINS_DIR}"
 
     if [[ "$(realpath "${APPX_PLUGINS_DIR}")/" == "${MRCMD_DIR}/"* ]]; then
@@ -134,8 +132,6 @@ function mrcmd_main_init_paths() {
     if [ -n "${MRCMD_PLUGINS_DIR}" ] && [[ "${MRCMD_PLUGINS_DIR}/" == "$(realpath "${APPX_PLUGINS_DIR}")/" ]]; then
       mrcore_echo_error "Project plugins cannot run from ${MRCMD_INFO_CAPTION} dir and its subdirectories"
     fi
-  else
-    APPX_PLUGINS_DIR=""
   fi
 
   # пути к общим плагинам и скриптам, а также к плагинам и скриптам проекта
