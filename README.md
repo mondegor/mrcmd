@@ -1,4 +1,4 @@
-# Mrcmd Tool v0.5.3
+# Mrcmd Tool v0.5.4
 Этот репозиторий содержит Mrcmd утилиту для группировки и запуска unix утилит, консольных скриптов и т.д.
 
 ## Статус проекта
@@ -15,7 +15,7 @@
 > - [для Linux](https://docs.docker.com/desktop/install/linux-install/);
 
 ### Инсталляция утилиты
-- `cd {PARENT_DIR}` // сначала перейти в директорию, где будет расположена утилита
+- Выбрать рабочую директорию, где должна быть расположена утилита
 - `curl -L -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip`
 - `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd && chmod +x ./mrcmd/cmd.sh`
 - for Linux: `sudo bash ./mrcmd/register.sh`
@@ -27,7 +27,7 @@
 - `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest mrcmd/plugins`
 - `mrcmd state` // проверка, что плагины утилиты были установлены (см. Shared plugins path)
 
-### Инициализация нового проекта
+### Пример инициализации нового проекта
 - `mkdir test-project && cd test-project`
 - `mrcmd init`
 - `mrcmd state` // проверка, что проект был инициализирован
