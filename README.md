@@ -18,8 +18,8 @@
 - `cd {PARENT_DIR}` // сначала перейти в директорию, где будет расположена утилита
 - `curl -L -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip`
 - `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd && chmod +x ./mrcmd/cmd.sh`
-- `sudo bash ./mrcmd/register.sh` (for Linux)
-- `register.bat` (for Windows, ВНИМАНИЕ: запускать из PowerShell или проводника под админом)
+- for Linux: `sudo bash ./mrcmd/register.sh`
+- for Windows: `register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под админом
 - `mrcmd state` // проверка, что утилита была установлена
 
 ### Инсталляция базовых плагинов
