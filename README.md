@@ -23,13 +23,12 @@
 - `mrcmd state` // проверка, что утилита была установлена
 
 ### Инсталляция базовых плагинов
-- `cd mrcmd`
 - `curl -L -o mrcmd-plugins.zip https://github.com/mondegor/mrcmd-plugins/archive/refs/tags/latest.zip`
-- `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest plugins`
-- `mrcmd state` // проверка, что плагины утилиты были установлены
+- `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest mrcmd/plugins`
+- `mrcmd state` // проверка, что плагины утилиты были установлены (см. Shared plugins path)
 
 ### Инициализация нового проекта
-- `cd ../ && mkdir test-project && cd test-project`
+- `mkdir test-project && cd test-project`
 - `mrcmd init`
 - `mrcmd state` // проверка, что проект был инициализирован
 
