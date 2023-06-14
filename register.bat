@@ -1,28 +1,45 @@
 @echo off
+rem Registration of Mrcmd Tool for Windows GitBash
 rem https://www.tutorialspoint.com/batch_script/
 rem https://ss64.com/nt/syntax-substring.html
 
-SET regKey=HKCU\Environment
-FOR /f "tokens=2*" %%a IN ('Reg.exe query "%regKey%" /v Path') DO SET userPath=%%~b
+set MRCMD_PATH=%cd:\=/%
+set MRCMD_PATH=/%MRCMD_PATH::=%/cmd.sh
+set MRCMD_DIR_BIN=%USERPROFILE%\AppData\Local\Mrcmd
+set MRCMD_PATH_BIN=%MRCMD_DIR_BIN%\mrcmd
 
-SET lastChar=%userPath:~-1%
-
-IF not "%lastChar%" == ";" (
-  SET userPath=%userPath%;
+if not exist %MRCMD_DIR_BIN% (
+  mkdir %MRCMD_DIR_BIN%
 )
 
-SET toolDir=%cd%
-CALL SET _userPath=%%userPath:%toolDir%=%%
+echo #!/usr/bin/env bash > %MRCMD_PATH_BIN%
+echo %MRCMD_PATH% "$@" >> %MRCMD_PATH_BIN%
 
-IF "%userPath%" == "%_userPath%" (
-  SET userPath=%userPath%%toolDir%;
-  Reg.exe add "%regKey%" /v Path /t REG_EXPAND_SZ /d "%userPath%" /f
-  echo The tool successfully registered
+set REG_KEY=HKCU\Environment
+for /f "tokens=2*" %%a IN ('Reg.exe query "%REG_KEY%" /v Path') DO set USER_PATH=%%~b
+
+set lastChar=%USER_PATH:~-1%
+
+if not "%lastChar%" == ";" (
+  set USER_PATH=%USER_PATH%;
+)
+
+call set _USER_PATH=%%USER_PATH:%MRCMD_DIR_BIN%;=%%
+
+if "%USER_PATH%" == "%_USER_PATH%" (
+  set USER_PATH=%USER_PATH%%MRCMD_DIR_BIN%;
+  goto :success
 ) else (
-  echo The tool already registered
+  echo Mrcmd Tool has been updated in %MRCMD_PATH_BIN%
+  goto :ok
 )
 
-echo See User Environment Variables:
-echo User PATH: %userPath%
+:success
+Reg.exe add "%REG_KEY%" /v Path /t REG_EXPAND_SZ /d "%USER_PATH%" /f
+echo Mrcmd Tool has been successfully registered in %MRCMD_PATH_BIN%
+
+:ok
+rem echo See User Environment Variables:
+rem echo User PATH: %USER_PATH%
 
 pause
