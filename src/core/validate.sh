@@ -64,3 +64,12 @@ function mrcore_validate_dir_required() {
     ${EXIT_ERROR}
   fi
 }
+
+function mrcore_validate_tool_required() {
+  local toolName="${1:?}"
+
+  if [[ "$(mrcore_tool_exists "${toolName}")" != true ]]; then
+    mrcore_echo_error "Tool '${toolName}' not found"
+    ${EXIT_ERROR}
+  fi
+}
