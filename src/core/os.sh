@@ -22,7 +22,12 @@ function mrcmd_os_realpath() {
 
 # using example: $(mrcmd_os_path "${string}")
 function mrcmd_os_path() {
-  local path="${1:?}"
+  local path="${1?}"
+
+  if [ -z "${path}" ]; then
+    echo ""
+    return
+  fi
 
   if [[ "${MRCORE_IS_WIN}" == true ]] &&
      [[ "${path:0:1}" == "/" ]] && [[ "${path:1:1}" != "/" ]]; then

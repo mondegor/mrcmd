@@ -1,4 +1,4 @@
-# Mrcmd Tool v0.5.6
+# Mrcmd Tool v0.5.7
 Этот репозиторий содержит Mrcmd Tool для группировки и запуска unix утилит, консольных скриптов и т.д.
 
 ## Статус проекта
@@ -15,17 +15,17 @@
 > - для [Linux](https://docs.docker.com/desktop/install/linux-install/);
 
 ### Инсталляция утилиты
-- Выбрать рабочую директорию, где должна быть расположена утилита
+- Выбрать рабочую директорию, где должна быть расположена утилита;
 - `curl -L -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip`
 - `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd && chmod +x ./mrcmd/cmd.sh`
-- for Linux: `sudo bash ./mrcmd/register.sh`
-- for Windows: `register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под админом
-- `mrcmd state` // проверка, что утилита была установлена
+- Для Linux, WSL: `sudo bash ./mrcmd/register.sh`
+- Для Windows: `register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под админом
+- `mrcmd state` // проверить, что утилита была установлена
 
 ### Инсталляция базовых плагинов
 - `curl -L -o mrcmd-plugins.zip https://github.com/mondegor/mrcmd-plugins/archive/refs/tags/latest.zip`
 - `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest mrcmd/plugins`
-- `mrcmd state` // проверка, что плагины утилиты были установлены (см. Shared plugins path)
+- `mrcmd state` // проверить, что плагины утилиты были установлены (см. Shared plugins path)
 
 ### Пример инициализации нового проекта
 - `mkdir test-project && cd test-project`
@@ -73,7 +73,7 @@ MPM каждому плагину позволяет решать собстве
 <img src="https://github.com/mondegor/mrcmd/blob/master/docs/img/mrcmd-c4.png" width="973">
 
 ## Какие возможности даёт
-- быстрое локальное разворачивание проекта с использованием групповых команд, таких как install, start (на базе Docker);
+- быстрое локальное разворачивание проекта с использованием групповых команд, таких как `install`, `start` (на базе Docker);
 - любой плагин можно подключить к нескольким проектам с изолированными настройками для каждого, они не будут пересекаться;
 - реализация плагинов под конкретный проект со специфической функциональностью;
 - возможность просмотра текущего переменного окружения всех плагинов для каждого проекта, выгрузка этого окружения в `.env.export`;

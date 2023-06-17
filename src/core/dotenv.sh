@@ -1,5 +1,4 @@
 
-# used: MRCORE_DOTENV_ARRAY
 readonly MRCORE_DOTENV_DEFAULT="${APPX_DIR}/.env"
 readonly MRCORE_DOTENV_EXPORTED="${APPX_DIR}/.env.exported"
 
