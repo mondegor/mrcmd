@@ -5,7 +5,7 @@ function mrcmd_help_GROUP_exec() {
   mrcmd_help_exec_head
 
   #markup:"--|-|---------|-------|-------|---------------------------------------|"
-  echo -e "${CC_GREEN}${MRCMD_INFO_CAPTION}${CC_END} is a tool for grouping and running shell tools, scripts, etc."
+  echo -e "${CC_GREEN}${MRCMD_INFO_CAPTION}${CC_END} is a tool for grouping and running unix commands and console scripts."
   echo ""
   echo -e "${CC_YELLOW}Usage:${CC_END}"
   echo -e "  [${CC_BLUE}options${CC_END}] ${CC_GREEN}COMMAND${CC_END} [arguments]"
