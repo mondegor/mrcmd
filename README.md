@@ -1,4 +1,4 @@
-# Mrcmd Tool v0.5.8
+# Mrcmd Tool v0.5.9
 Этот репозиторий содержит Mrcmd Tool для группировки и запуска unix команд и консольных скриптов.
 
 ## Статус проекта
@@ -15,14 +15,14 @@
 
 ### Инсталляция утилиты
 - Выбрать рабочую директорию, где должна быть расположена утилита;
-- `curl -L -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip`
+- `curl -fsSL -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip --ssl-no-revoke`
 - `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd && chmod +x ./mrcmd/cmd.sh`
 - Для Linux, WSL: `sudo bash ./mrcmd/register.sh`
-- Для Windows: `register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под админом
+- Для Windows: `register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под Admin
 - `mrcmd state` // проверить, что утилита была установлена
 
 ### Инсталляция базовых плагинов
-- `curl -L -o mrcmd-plugins.zip https://github.com/mondegor/mrcmd-plugins/archive/refs/tags/latest.zip`
+- `curl -fsSL -o mrcmd-plugins.zip https://github.com/mondegor/mrcmd-plugins/archive/refs/tags/latest.zip --ssl-no-revoke`
 - `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest mrcmd/plugins`
 - `mrcmd state` // проверить, что плагины утилиты были установлены (см. Shared plugins path)
 
