@@ -1,4 +1,4 @@
-# Mrcmd Tool v0.5.9
+# Mrcmd Tool v0.5.10
 Этот репозиторий содержит Mrcmd Tool для группировки и запуска unix команд и консольных скриптов.
 
 ## Статус проекта
@@ -18,15 +18,16 @@
 - `curl -fsSL -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/latest.zip --ssl-no-revoke`
 - `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-latest mrcmd && chmod +x ./mrcmd/cmd.sh`
 - Для Linux, WSL: `sudo bash ./mrcmd/register.sh`
-- Для Windows: `register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под Admin
+- Для Windows: `./mrcmd/register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под Admin
 - `mrcmd state` // проверить, что утилита была установлена
 
-### Инсталляция базовых плагинов
+#### Инсталляция базовых плагинов
+- Выбрать рабочую директорию, содержащую директорию `mrcmd`;
 - `curl -fsSL -o mrcmd-plugins.zip https://github.com/mondegor/mrcmd-plugins/archive/refs/tags/latest.zip --ssl-no-revoke`
 - `unzip mrcmd-plugins.zip && rm mrcmd-plugins.zip && mv mrcmd-plugins-latest mrcmd/plugins`
 - `mrcmd state` // проверить, что плагины утилиты были установлены (см. Shared plugins path)
 
-### Пример инициализации нового проекта
+#### Пример инициализации нового проекта
 - `mkdir test-project && cd test-project`
 - `mrcmd init`
 - `mrcmd state` // проверка, что проект был инициализирован
@@ -57,7 +58,7 @@
 - модуля управления небольшими утилитами — плагинами (MPM), предоставляющий общий интерфейс для написания плагинов;
 - и контроллера, который, используя ядро, обрабатывает внешние команды и перенаправляет их в модуль MPM;
 
-<img src="https://github.com/mondegor/mrcmd/blob/master/docs/img/mrcmd-architecture.png" width="539">
+<img src="https://github.com/mondegor/mrcmd/raw/master/docs/img/mrcmd-architecture.png" width="539">
 
 MPM каждому плагину позволяет решать собственную задачу, для этого предоставляет ему:
 - независимое переменное окружение;
@@ -69,7 +70,7 @@ MPM каждому плагину позволяет решать собстве
 Тем самым, в каждом плагине скрывается способ решения той или иной задачи. Конкретный проект пользуется только общим интерфейсом утилиты и расширенными возможностями подключённых плагинов.
 
 ## Взаимодействие с окружением
-<img src="https://github.com/mondegor/mrcmd/blob/master/docs/img/mrcmd-c4.png" width="973">
+<img src="https://github.com/mondegor/mrcmd/raw/master/docs/img/mrcmd-c4.png" width="973">
 
 ## Какие возможности даёт
 - быстрое локальное разворачивание проекта с использованием групповых команд, таких как `install`, `start` (на базе Docker);
