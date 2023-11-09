@@ -1,4 +1,15 @@
 
+# An introduction to Bash arrays:
+# arr=()         Create an empty array
+# arr=(1 2 3)    Initialize array
+# ${arr[2]}      Retrieve third element
+# ${arr[@]}      Retrieve all elements
+# ${!arr[@]}     Retrieve array indices
+# ${#arr[@]}     Calculate array size
+# arr[0]=3       Overwrite 1st element
+# arr+=(4)       Append value(s)
+# ${arr[@]:s:n}  Retrieve n elements starting at index s
+
 function mrcore_lib_repeat_string() {
   mrcore_xtrace_store_and_off
 
@@ -41,6 +52,18 @@ function mrcore_lib_check_string_suffix() {
   fi
 
   ${RETURN_FALSE}
+}
+
+# using example: if mrcore_lib_is_array_empty array[@] ; then
+# array empty if: array=() or array=([0]="")
+function mrcore_lib_is_array_empty() {
+  local array=("${!1-}")
+
+  if [ ${#array[@]} -gt 1 ] || [ ${#array[@]} -eq 1 ] && [ -n "${array[0]}" ]; then
+    ${RETURN_FALSE}
+  fi
+
+  ${RETURN_TRUE}
 }
 
 # using example: if mrcore_lib_in_array "${searchItem}" array[@] ; then
