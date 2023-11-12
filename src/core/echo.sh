@@ -51,9 +51,9 @@ function mrcore_echo_var() {
 
   if [ -z "${varValue}" ]; then
     varValue="NULL"
-  elif [[ "${varValue}" =~ ^[0-9]+$ ]]; then
+  elif [[ "${varValue}" =~ ^[0-9]+$ ]] || [[ "${varValue}" == true ]]; then
     valueColor="${CC_CYAN}"
-  elif [[ "${varValue}" != true ]] && [[ "${varValue}" != false ]]; then
+  elif [[ "${varValue}" != false ]]; then
     valueColor="${CC_GREEN}"
     varValue="\"${varValue}\""
   fi

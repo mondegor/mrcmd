@@ -41,7 +41,7 @@ function mrcore_dotenv_init_var() {
   if [ -z "${varValue}" ]; then
     local varDefault="${2-}"
     eval "export ${varName}=\"${varDefault}\""
-  elif [ "${varValue}" == "NULL" ]; then
+  elif [[ "${varValue}" == "NULL" ]]; then
     eval "export ${varName}=\"\""
   fi
 }
@@ -78,6 +78,11 @@ function mrcore_dotenv_echo_var_array() {
 function mrcore_dotenv_export_var() {
   local varName="${1:?}"
   eval "local varValue=\"\${${varName}-}\""
+
+  if [ -z "${varValue}" ]; then
+    varValue="NULL"
+  fi
+
   cat >> "${MRCORE_DOTENV_EXPORTED}" <<< "# ${varName}=${varValue}"
 }
 

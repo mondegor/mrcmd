@@ -103,7 +103,7 @@ function mrcmd_plugins_exec_method() {
   else
     local errorCode="$?"
 
-    if [[ "${errorCode}" -eq ${ERROR_CODE_UNKNOWN_COMMAND} ]] ; then
+    if [[ "${errorCode}" -eq ${ERROR_CODE_UNKNOWN_COMMAND} ]]; then
       ${RETURN_UNKNOWN_COMMAND}
     fi
 
