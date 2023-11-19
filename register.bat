@@ -13,7 +13,7 @@ if not exist %MRCMD_DIR_BIN% (
 )
 
 echo #!/usr/bin/env bash > %MRCMD_PATH_BIN%
-echo %MRCMD_PATH% "$@" >> %MRCMD_PATH_BIN%
+echo "%MRCMD_PATH%" "$@" >> %MRCMD_PATH_BIN%
 
 set REG_KEY=HKCU\Environment
 for /f "tokens=2*" %%a IN ('Reg.exe query "%REG_KEY%" /v Path') DO set USER_PATH=%%~b
