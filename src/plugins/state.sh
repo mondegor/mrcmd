@@ -6,7 +6,7 @@ function mrcmd_plugins_exec_state() {
   local mrcmdPluginsDir="${CC_RED}not specified${CC_END}"
   local appxPluginsDir="${CC_RED}not specified${CC_END}"
 
-  if [ ${#MRCORE_DOTENV_ARRAY[@]} -gt 0 ]; then
+  if [[ ${#MRCORE_DOTENV_ARRAY[@]} -gt 0 ]]; then
     appxEnvFiles="${CC_BLUE}$(mrcmd_lib_implode ", " MRCORE_DOTENV_ARRAY[@])${CC_END}"
   fi
 
@@ -24,7 +24,7 @@ function mrcmd_plugins_exec_state() {
   echo -e "${CC_YELLOW}Shared plugins path${CC_END}: ${mrcmdPluginsDir}"
   echo -e "${CC_YELLOW}Project plugins path${CC_END}: ${appxPluginsDir}"
 
-  if [ ${#MRCORE_DOTENV_ARRAY[@]} -eq 0 ]; then
+  if [[ ${#MRCORE_DOTENV_ARRAY[@]} -eq 0 ]]; then
     mrcore_echo_sample "Run '${MRCMD_INFO_NAME} init' to initialize a new ${MRCMD_INFO_CAPTION} project"
     return
   fi

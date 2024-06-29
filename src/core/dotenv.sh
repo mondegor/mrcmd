@@ -3,7 +3,7 @@ readonly MRCORE_DOTENV_DEFAULT="${APPX_DIR}/.env"
 readonly MRCORE_DOTENV_EXPORTED="${APPX_DIR}/.env.exported"
 
 function mrcore_dotenv_init() {
-  if [ ${#MRCORE_DOTENV_ARRAY[@]} -eq 0 ]; then
+  if [[ ${#MRCORE_DOTENV_ARRAY[@]} -eq 0 ]]; then
     if [ -f "${MRCORE_DOTENV_DEFAULT}" ]; then
       MRCORE_DOTENV_ARRAY+=("${MRCORE_DOTENV_DEFAULT}")
     else

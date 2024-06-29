@@ -35,7 +35,7 @@ function mrcmd_plugins_depends_plugin_clean_depends() {
 function mrcmd_plugins_depends_merge() {
   local array=("${!1-}")
 
-  if [ ${#array[@]} -eq 0 ]; then
+  if [[ ${#array[@]} -eq 0 ]]; then
     return
   fi
 

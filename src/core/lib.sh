@@ -59,7 +59,7 @@ function mrcore_lib_check_string_suffix() {
 function mrcore_lib_is_array_empty() {
   local array=("${!1-}")
 
-  if [ ${#array[@]} -gt 1 ] || [ ${#array[@]} -eq 1 ] && [ -n "${array[0]}" ]; then
+  if [[ ${#array[@]} -gt 1 ]] || [[ ${#array[@]} -eq 1 ]] && [ -n "${array[0]}" ]; then
     ${RETURN_FALSE}
   fi
 
@@ -171,5 +171,10 @@ function mrcore_lib_rm_resource() {
 # using example: $(mrcmd_plugins_lib_get_var_value "${varName}")
 function mrcore_lib_get_var_value() {
   local varName="${1:?}"
-  eval "echo \"\${${varName}-}\""
+
+  if [[ "${varName}" =~ ^[A-Z][A-Z0-9_]+[A-Z]$ ]]; then
+    eval "echo \"\${${varName}-}\""
+  else
+    echo "${varName}"
+  fi
 }

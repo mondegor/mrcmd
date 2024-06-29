@@ -129,7 +129,7 @@ function mrcmd_plugins_load_if_depends_loaded() {
   mrcmd_plugins_depends_plugin_load_depends "${pluginName}"
   mrcmd_plugins_depends_plugin_clean_depends
 
-  if [ ${#MRCMD_PLUGIN_DEPENDS_ARRAY[@]} -eq 0 ]; then
+  if [[ ${#MRCMD_PLUGIN_DEPENDS_ARRAY[@]} -eq 0 ]]; then
     if mrcmd_plugins_load_if_initialized "${pluginName}" ; then
       mrcmd_plugins_depends_remove_plugin "${pluginName}"
     fi

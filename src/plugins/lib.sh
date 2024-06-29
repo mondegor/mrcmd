@@ -21,7 +21,7 @@ function mrcmd_plugins_lib_get_plugins_available() {
     dirIndex=${MRCMD_PLUGINS_AVAILABLE_DIRS_ARRAY[${i}]}
     i=$((i + 1))
 
-    if [ ${#excludedPlugins} -gt 0 ] && mrcore_lib_in_array "${pluginName}" excludedPlugins[@] ; then
+    if [[ ${#excludedPlugins} -gt 0 ]] && mrcore_lib_in_array "${pluginName}" excludedPlugins[@] ; then
       continue
     fi
 

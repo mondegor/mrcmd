@@ -183,6 +183,11 @@ fi
 4. `wsl --export {image_name} "{backup_dir}\{image_name}.tar"` // экспорт бэкапа указанного образа Linux (только в состоянии Stopped), где {image_name} - название образа из wsl --list, {backup_dir} - директория куда будет выгружен бекап образа
 5. `wsl --import {image_name} "{wsl_dir}" "{backup_dir}\{image_name}.tar" --version 2` // импорт бэкапа указанного образа Linux, где {image_name} - название образа из wsl --list, {wsl_dir} - директория где будет находиться образ, {backup_dir} - директория к бэкапу образа
 6. `wsl --unregister {image_name}` // удаление указанного образа Linux, где {image_name} - название образа
+7. `wsl hostname -I` // IP wsl
+
+**Команды для `Windows CMD` (от имени администратора):**
+Для монтирования директории WSL, необходимо сделать следующее:
+`mklink /D {windows_dir} \\wsl.localhost\{image_name}\home\{user_name}\work`, где {windows_dir}=C:\sample_work_dir
 
 #### 6. Создание бекапа Linux системы
 - остановить систему (команда 5.3);
