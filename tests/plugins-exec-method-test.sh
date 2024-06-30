@@ -45,7 +45,7 @@ function mrcmd_plugins_exec_method_if_not_system_test() {
   }
 
   function mrcmd_plugins_exec_method() {
-    if [[ "${1:?}" != "pluginName" ]] || [[ "${2:?}" != "exec" ]]; then
+    if [[ "${1:?}" != "pluginName" ]] || [[ "${2:?}" != "${MRCMD_PLUGIN_METHOD_EXECUTE}" ]]; then
       ${RETURN_FALSE}
     fi
   }

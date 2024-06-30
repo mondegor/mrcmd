@@ -37,14 +37,14 @@ function mrcore_get_shell() {
   echo "${shellName}"
 }
 
-# using example: $(mrcore_tool_exists "${toolName}")
-function mrcore_tool_exists() {
-  local toolName="${1:?}"
+# using example: if mrcore_command_exists "${commandName}" ; then
+function mrcore_command_exists() {
+  local commandName="${1:?}"
 
-  # WARNING: ${toolName} must be without quotes
-  if [[ $(${toolName} 2>&1) =~ "command not found" ]]; then
-    echo false
-  else
-    echo true
+  # WARNING: ${commandName} must be without quotes
+  if [[ $(${commandName} 2>&1) =~ "not found" ]]; then
+    ${RETURN_FALSE}
   fi
+
+  ${RETURN_TRUE}
 }

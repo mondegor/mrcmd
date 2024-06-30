@@ -1,5 +1,8 @@
 
+readonly MRCMD_PLUGIN_METHOD_EXECUTE="exec"
+readonly MRCMD_PLUGIN_METHOD_CAN_EXECUTE="canexec"
 readonly MRCMD_PLUGIN_METHODS_ARRAY=("config" "export-config" "install" "start" "stop" "uninstall" "help")
+readonly MRCMD_PLUGIN_METHODS_EXECUTE_COMMANDS_ARRAY=("${MRCMD_PLUGIN_METHOD_EXECUTE}" "install" "start" "stop" "uninstall")
 readonly MRCMD_PLUGIN_METHODS_SHOW_COMPLETED_ARRAY=("install" "start" "stop" "uninstall")
 
 function mrcmd_plugins_default_echo_GROUP_plugin_head() {
@@ -45,7 +48,7 @@ function mrcmd_plugins_exec_SINGLE_method() {
 
   local pluginName="${1:?}"
   local pluginMethod="${2-}"
-  local pluginMethodProxy="exec"
+  local pluginMethodProxy="${MRCMD_PLUGIN_METHOD_EXECUTE}"
   shift
 
   if [ -n "${pluginMethod}" ]; then
@@ -81,6 +84,7 @@ function mrcmd_plugins_exec_method() {
   local pluginName="${2:?}"
   local pluginMethod="${3:?}"
   local fullPluginMethod
+  local fullPluginMethodCanExecute
   shift; shift; shift
 
   fullPluginMethod=$(mrcmd_plugins_lib_get_plugin_method_name "${pluginName}" "${pluginMethod}")
@@ -93,23 +97,35 @@ function mrcmd_plugins_exec_method() {
 
   mrcmd_plugins_exec_method_head "${execType}" "${pluginName}" "${pluginMethod}"
 
+  fullPluginMethodCanExecute=$(mrcmd_plugins_lib_get_plugin_method_name "${pluginName}" "${MRCMD_PLUGIN_METHOD_CAN_EXECUTE}")
+
+  if mrcore_lib_func_exists "${fullPluginMethodCanExecute}" ; then
+    mrcore_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_BLUE}" "Exec method: ${fullPluginMethodCanExecute}(${pluginMethod})"
+
+    if ! ${fullPluginMethodCanExecute} "${pluginMethod}" ; then
+      mrcore_echo_notice "Command '${MRCMD_INFO_NAME} ${pluginName} ${arguments}' skipped"
+      return
+    fi
+  fi
+
   mrcore_debug_echo ${DEBUG_LEVEL_1} "${DEBUG_YELLOW}" "Exec method: ${fullPluginMethod}(${arguments})"
 
   if ${fullPluginMethod} "$@" ; then
     if mrcore_lib_in_array "${pluginMethod}" MRCMD_PLUGIN_METHODS_SHOW_COMPLETED_ARRAY[@] ; then
       mrcore_echo_notice "Command '${MRCMD_INFO_NAME} ${pluginName} ${pluginMethod}' completed"
     fi
+
     return
-  else
-    local errorCode="$?"
-
-    if [[ "${errorCode}" -eq ${ERROR_CODE_UNKNOWN_COMMAND} ]]; then
-      ${RETURN_UNKNOWN_COMMAND}
-    fi
-
-    mrcore_echo_error "${fullPluginMethod}(${arguments}) crashed"
-    ${RETURN_UNKNOWN_ERROR}
   fi
+
+  local errorCode="$?"
+
+  if [[ "${errorCode}" -eq ${ERROR_CODE_UNKNOWN_COMMAND} ]]; then
+    ${RETURN_UNKNOWN_COMMAND}
+  fi
+
+  mrcore_echo_error "${fullPluginMethod}(${arguments}) crashed"
+  ${RETURN_UNKNOWN_ERROR}
 }
 
 # private
