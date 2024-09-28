@@ -46,8 +46,9 @@ Vars:
 
 #### 3.3 Создание рабочей директории
 - `mkdir -p /home/{user_name}/work`
+- `mkdir -p /home/{user_name}/work/.cache`
 
-#### 3.4. Добавление настроек пользователя при устанавливаемых при входе в консоль(OPTIONAL)
+#### 3.4. Добавление настроек пользователя устанавливаемых при входе в консоль (OPTIONAL)
 - `mcedit /home/{user_name}/.bashrc`
 
 Добавить в конец файла:
@@ -84,7 +85,7 @@ default = {user_name}
 - `touch /home/{user_name}/work/.gitignore_global` (OPTIONAL)
 - `git config --global core.excludesfile "/home/{user_name}/work/.gitignore_global"` (OPTIONAL)
 
-#### 3.7. Вывод текущей ветки GIT в консоле (OPTIONAL)
+#### 3.7. Вывод текущей ветки GIT в консоли (OPTIONAL)
 - `sudo mcedit /home/{user_name}/.bashrc`
 
 Найти блок кода:
@@ -170,9 +171,28 @@ fi
 > command = service docker start
 > </pre>
 
-Инсталляция и настройка системы завершена. 
+#### 5. Установка и настройка Go (OPTIONAL)
+> **ПОДРОБНЕЕ:**\
+> https://www.jetbrains.com/help/go/how-to-use-wsl-development-environment-in-product.html
 
-#### 5. Windows команды управления образами Linux для их быстрого бекапа и развёртывания
+#### 5.1. Установка Go
+- `wget https://go.dev/dl/go1.22.6.linux-amd64.tar.gz`
+- `tar -C /usr/local -xzf go1.22.6.linux-amd64.tar.gz`
+
+#### 5.2. Добавление Go переменных устанавливаемых при входе в консоль
+- `mkdir /home/{user_name}/work/.cache/golang`
+- `mcedit /home/{user_name}/.bashrc`
+
+- Добавить в конец файла:
+<pre>
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/work/.cache/golang
+export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+</pre>
+
+Инсталляция и настройка системы завершена.
+
+#### 6. Windows команды управления образами Linux для их быстрого бекапа и развёртывания
 > **ПОДРОБНЕЕ:**\
 > https://drupeople.ru/article/kak-izmenit-raspolozhenie-virtualnogo-diska-docker-windows
 
@@ -183,30 +203,43 @@ fi
 4. `wsl --export {image_name} "{backup_dir}\{image_name}.tar"` // экспорт бэкапа указанного образа Linux (только в состоянии Stopped), где {image_name} - название образа из wsl --list, {backup_dir} - директория куда будет выгружен бекап образа
 5. `wsl --import {image_name} "{wsl_dir}" "{backup_dir}\{image_name}.tar" --version 2` // импорт бэкапа указанного образа Linux, где {image_name} - название образа из wsl --list, {wsl_dir} - директория где будет находиться образ, {backup_dir} - директория к бэкапу образа
 6. `wsl --unregister {image_name}` // удаление указанного образа Linux, где {image_name} - название образа
-7. `wsl hostname -I` // IP wsl
 
 **Команды для `Windows CMD` (от имени администратора):**
 Для монтирования директории WSL, необходимо сделать следующее:
 `mklink /D {windows_dir} \\wsl.localhost\{image_name}\home\{user_name}\work`, где {windows_dir}=C:\sample_work_dir
 
-#### 6. Создание бекапа Linux системы
+#### 7. Связь хостовой машины с WSL (сетевые настройки)
+
+**Команды для `Windows PowerShell`:**
+1. `wsl hostname -I` // ${WSL_IP} - wsl's IP (как правило, первый в списке)
+2. `http://${WSL_IP}:8080` // пример открытия WSL ресурса по 8080 порту
+3. `netsh interface portproxy show v4tov4` // список проброшенных портов с хостовой машины на WSL;
+4. `netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=${WSL_IP}` // пример проброски 8080 порта на ${WSL_IP};
+5. `netsh interface portproxy delete v4tov4 listenport=8080 listenaddress=0.0.0.0` // пример удаления 8080 порта;
+
+**Команды для `WSL (Linux)`:**
+1. `ip route show`; // wsl's + doker's IP
+2. `ip add | grep eth0`; // wsl's IP
+3. `ip add | grep docker0`; // doker's IP
+
+#### 8. Создание бекапа Linux системы
 - остановить систему (команда 5.3);
 - создать бекап (команда 5.4);
 - убедиться, что бекап создан;
 
-#### 7. Перенос Linux системы на любой другой диск (по умолчанию устанавливается на диск C):
+#### 9. Перенос Linux системы на любой другой диск (по умолчанию устанавливается на диск C):
 - проделать все шаги пункта 5;
 - удалить установленную систему (команда 5.6);
 - развернуть систему из бекапа в нужной директории (команда 5.5); 
 
-### 8. Установка и настройка проекта в Linux системе
+### 10. Установка и настройка проекта в Linux системе
 - установить любой проект, который нужен на виртуальной машине;
-- забэкапить его;
+- сделать бэкап проекта;
 - начать использовать;
 
 Это позволяет делать независимые Linux образы для разных проектов и быстро возвращаться к ним.
 
-### 9. Подключение к Docker из вне
+### 11. Подключение к Docker из вне
 Добавить в файл /etc/docker/daemon.json:
 <pre>
 {"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]}
