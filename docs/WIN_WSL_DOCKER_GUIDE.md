@@ -1,13 +1,14 @@
-## Инструкция по установке Ubuntu + Docker под Windows на WSL2
+## Инструкция по установке Ubuntu + Docker + Go под Windows на WSL2
 
 **Перед началом установки, скопируйте текущий документ, замените все ниже приведённые переменные на свои значения, и приступайте к установке:**
 <pre>
 Vars:
   {linux_name} = Ubuntu 20.04.5 LTS
   {image_name} = Ubuntu-20.04
-  {wsl_dir} = d:\wsl\Ubuntu-20.04\
+  {wsl_dir} = d:\wsl\Ubuntu-20.04
   {backup_dir} = d:\backup\wsl\Ubuntu-20.04
-  {user_name} = ivanov
+  {wsl_swap_file} = d:\\wsl\\Ubuntu-20.04\\swap.vhdx (ВАЖНО: только двойные слеши)
+  {user_login} = ivan_ivanov
   {user_email} = ivan.ivanov@localhost
   {user_name_lastname} = Ivan Ivanov
 </pre>
@@ -19,6 +20,7 @@ Vars:
 - Зайти на https://learn.microsoft.com/en-us/windows/wsl/install-manual#step-4---download-the-linux-kernel-update-package
 - Скачать и установить `WSL2 Linux kernel update package for x64 machines` (wsl_update_x64.msi)
 - Зайти в `Windows PowerShell`
+- Запустить `wsl --update` // обновление wsl2
 - Запустить `wsl --set-default-version 2` // установка wsl2 по умолчанию
 
 ### 2. Установка Linux
@@ -45,16 +47,16 @@ Vars:
 - `sudo apt install mc`
 
 #### 3.3 Создание рабочей директории
-- `mkdir -p /home/{user_name}/work`
-- `mkdir -p /home/{user_name}/work/.cache`
+- `mkdir -p /home/{user_login}/work`
+- `mkdir -p /home/{user_login}/work/.cache`
 
 #### 3.4. Добавление настроек пользователя устанавливаемых при входе в консоль (OPTIONAL)
-- `mcedit /home/{user_name}/.bashrc`
+- `mcedit /home/{user_login}/.bashrc`
 
 Добавить в конец файла:
 <pre>
 export EDITOR=mcedit
-cd /home/{user_name}/work 
+cd /home/{user_login}/work 
 </pre>
 
 - `sudo mcedit /root/.bashrc`
@@ -69,8 +71,13 @@ export EDITOR=mcedit
 
 Добавить настройки:
 <pre>
+# Run system/service manager, check: systemctl list-unit-files --type=service
+[boot]
+systemd = true
+
+# Set the user when launching a distribution with WSL
 [user]
-default = {user_name}
+default = {user_login}
 </pre>
 
 > **ПОДРОБНЕЕ:**\
@@ -82,11 +89,11 @@ default = {user_name}
 - `git config --global core.autocrlf input`
 - `git config --global core.quotepath off`
 
-- `touch /home/{user_name}/work/.gitignore_global` (OPTIONAL)
-- `git config --global core.excludesfile "/home/{user_name}/work/.gitignore_global"` (OPTIONAL)
+- `touch /home/{user_login}/work/.gitignore_global` (OPTIONAL)
+- `git config --global core.excludesfile "/home/{user_login}/work/.gitignore_global"` (OPTIONAL)
 
 #### 3.7. Вывод текущей ветки GIT в консоли (OPTIONAL)
-- `sudo mcedit /home/{user_name}/.bashrc`
+- `sudo mcedit /home/{user_login}/.bashrc`
 
 Найти блок кода:
 <pre>
@@ -162,26 +169,51 @@ fi
 - `sudo cat /var/log/docker.log`
 
 > **ВАЖНО**:
-> - команду `sudo service docker start` необходимо запускать каждый раз при старте Linux
-> - или можно создать файл `/etc/init-wsl`, поместить туда `service docker start`,
-далее создать bat файл со стартом виртуалки, например: `wsl -d {image_name} -u root /etc/init-wsl`
-> - для `Windows 11` есть решение проще, достаточно в `wsl.conf` добавить:
+> - благодаря опции `systemd = true` в `wsl.conf` команду `sudo service docker start` больше не нужно
+> - будет запускать каждый раз при запуске wsl. Но для этого нужно хотя бы раз запустить
+> - докер контейнер для того чтобы был создан docker.socket;
+> - для `Windows 11` есть возможность в `wsl.conf` прописывать команду, которая будет выполнена при запуске wsl:
 > <pre>
 > [boot]
 > command = service docker start
 > </pre>
 
-#### 5. Установка и настройка Go (OPTIONAL)
+#### 5. Настройка .wslconfig для эффективной работы wsl и регулирования потребления ресурсов 
+> **ПОДРОБНЕЕ:**\
+> https://learn.microsoft.com/en-us/windows/wsl/wsl-config
+
+На хостовой машине в директории %USERPROFILE% нужно разместить файл `.wslconfig`, предварительно выставив в нём приемлемые значения параметров:
+<pre>
+# Settings apply across all Linux distros running on WSL 2
+[wsl2]
+
+# Limits VM memory to use no more than N GB, this can be set as whole numbers using GB or MB, default is 50% of available RAM
+memory=6GB
+
+# Sets the VM to use N virtual processors, default is the same number of logical processors on Windows
+processors=2
+
+# Sets amount of swap storage space to N GB, default is 25% of available RAM
+swap=3GB
+
+# Sets swapfile path location, default is %USERPROFILE%\AppData\Local\Temp\swap.vhdx
+swapfile={wsl_swap_file}
+</pre>
+
+#### 6. Установка и настройка Go (OPTIONAL)
 > **ПОДРОБНЕЕ:**\
 > https://www.jetbrains.com/help/go/how-to-use-wsl-development-environment-in-product.html
 
-#### 5.1. Установка Go
-- `wget https://go.dev/dl/go1.22.6.linux-amd64.tar.gz`
-- `tar -C /usr/local -xzf go1.22.6.linux-amd64.tar.gz`
+#### 6.1. Установка Go
+- Перед этим желательно выбрать свежий дистрибутив https://go.dev/dl/;
+- Далее в wsl запустить закачку и распаковку дистрибутива:  
+  - `wget https://go.dev/dl/go1.23.3.linux-amd64.tar.gz`;
+  - `tar -C /usr/local -xzf go1.23.3.linux-amd64.tar.gz`;
+  - `rm ./go1.23.3.linux-amd64.tar.gz`;
 
-#### 5.2. Добавление Go переменных устанавливаемых при входе в консоль
-- `mkdir /home/{user_name}/work/.cache/golang`
-- `mcedit /home/{user_name}/.bashrc`
+#### 6.2. Добавление Go переменных устанавливаемых при входе в консоль
+- `mkdir /home/{user_login}/work/.cache/golang`
+- `mcedit /home/{user_login}/.bashrc`
 
 - Добавить в конец файла:
 <pre>
@@ -192,54 +224,46 @@ export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 
 Инсталляция и настройка системы завершена.
 
-#### 6. Windows команды управления образами Linux для их быстрого бекапа и развёртывания
+#### 7. Windows команды управления образами Linux для их быстрого бекапа и развёртывания
 > **ПОДРОБНЕЕ:**\
 > https://drupeople.ru/article/kak-izmenit-raspolozhenie-virtualnogo-diska-docker-windows
 
 **Команды для `Windows PowerShell`:**
-1. `wsl --list -v` // список образов Linux
-2. `wsl --set-default-version 2` // установка wsl2 (бывает, что по умолчанию используется wsl1)
-3. `wsl --shutdown` // остановка всех запущенных образов Linux
-4. `wsl --export {image_name} "{backup_dir}\{image_name}.tar"` // экспорт бэкапа указанного образа Linux (только в состоянии Stopped), где {image_name} - название образа из wsl --list, {backup_dir} - директория куда будет выгружен бекап образа
-5. `wsl --import {image_name} "{wsl_dir}" "{backup_dir}\{image_name}.tar" --version 2` // импорт бэкапа указанного образа Linux, где {image_name} - название образа из wsl --list, {wsl_dir} - директория где будет находиться образ, {backup_dir} - директория к бэкапу образа
-6. `wsl --unregister {image_name}` // удаление указанного образа Linux, где {image_name} - название образа
+1. `wsl --list -v` // список подключённых к wsl образов Linux
+2. `wsl --update` // обновление wsl2
+3. `wsl --set-default-version 2` // установка wsl2 (бывает, что по умолчанию используется wsl1)
+4. `wsl --shutdown` // остановка всех запущенных образов Linux
+5. `wsl --export {image_name} "{backup_dir}\{image_name}.tar"` // экспорт бэкапа указанного образа Linux (только в состоянии Stopped), где {image_name} - название образа из wsl --list, {backup_dir} - директория куда будет выгружен бекап образа
+6. `wsl --import {image_name} "{wsl_dir}" "{backup_dir}\{image_name}.tar" --version 2` // импорт бэкапа указанного образа Linux, где {image_name} - название образа из wsl --list, {wsl_dir} - директория где будет находиться образ, {backup_dir} - директория к бэкапу образа
+7. `wsl --unregister {image_name}` // удаление указанного образа Linux, где {image_name} - название образа
 
 **Команды для `Windows CMD` (от имени администратора):**
 Для монтирования директории WSL, необходимо сделать следующее:
-`mklink /D {windows_dir} \\wsl.localhost\{image_name}\home\{user_name}\work`, где {windows_dir}=C:\sample_work_dir
+`mklink /D {windows_dir} \\wsl.localhost\{image_name}\home\{user_login}\work`, где {windows_dir}=C:\sample_work_dir
 
-#### 7. Связь хостовой машины с WSL (сетевые настройки)
+#### 8. Связь хостовой машины с WSL (сетевые настройки)
 
 **Команды для `Windows PowerShell`:**
-1. `wsl hostname -I` // ${WSL_IP} - wsl's IP (как правило, первый в списке)
-2. `http://${WSL_IP}:8080` // пример открытия WSL ресурса по 8080 порту
-3. `netsh interface portproxy show v4tov4` // список проброшенных портов с хостовой машины на WSL;
-4. `netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=${WSL_IP}` // пример проброски 8080 порта на ${WSL_IP};
-5. `netsh interface portproxy delete v4tov4 listenport=8080 listenaddress=0.0.0.0` // пример удаления 8080 порта;
+1. `wsl hostname -I` // ${WSL_IP} - выделенный IP для wsl (как правило, первый в списке)
+2. `http://${WSL_IP}:8080` // открывает WSL ресурс на 8080 порту
+3. `netsh interface portproxy show v4tov4` // выводит список проброшенных портов с хостовой машины на WSL
+4. `netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=8080 connectaddress=${WSL_IP}` // пробрасывает 8080 порт на ${WSL_IP}
+5. `netsh interface portproxy delete v4tov4 listenport=8080 listenaddress=0.0.0.0` // удаляет проброшенный 8080 порт
 
 **Команды для `WSL (Linux)`:**
-1. `ip route show`; // wsl's + doker's IP
-2. `ip add | grep eth0`; // wsl's IP
-3. `ip add | grep docker0`; // doker's IP
+1. `ip route show`; // выделенные IP для wsl + doker
+2. `ip add | grep eth0`; // выделенный IP для wsl
+3. `ip add | grep docker0`; // выделенный IP для doker
 
-#### 8. Создание бекапа Linux системы
-- остановить систему (команда 5.3);
-- создать бекап (команда 5.4);
-- убедиться, что бекап создан;
-
-#### 9. Перенос Linux системы на любой другой диск (по умолчанию устанавливается на диск C):
-- проделать все шаги пункта 5;
-- удалить установленную систему (команда 5.6);
-- развернуть систему из бекапа в нужной директории (команда 5.5); 
-
-### 10. Установка и настройка проекта в Linux системе
-- установить любой проект, который нужен на виртуальной машине;
-- сделать бэкап проекта;
-- начать использовать;
+#### 9. Создание бекапа Linux системы + перенос Linux системы на любой диск (по умолчанию разворачивается на диске C):
+- остановить wsl систему (команда 7.4);
+- создать бекап (команда 7.5) и убедиться, что он создан;
+- удалить установленную wsl систему (команда 7.7);
+- развернуть систему из бекапа в нужной директории (команда 7.5); 
 
 Это позволяет делать независимые Linux образы для разных проектов и быстро возвращаться к ним.
 
-### 11. Подключение к Docker из вне
+### 10. Подключение к Docker из вне
 Добавить в файл /etc/docker/daemon.json:
 <pre>
 {"hosts": ["tcp://0.0.0.0:2375", "unix:///var/run/docker.sock"]}

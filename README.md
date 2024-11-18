@@ -1,8 +1,8 @@
-# Mrcmd Tool v0.6.1
+# Mrcmd Tool v0.6.2
 Этот репозиторий содержит Mrcmd Tool для группировки и запуска unix команд и консольных скриптов.
 
 ## Статус проекта
-Проект находится на стадии бета-тестирования.
+Данный инструмент проверен на Windows и Linux системах и используется в локальной разработке.
 
 ## Быстрый старт
 > Для Windows два пути использования утилиты:
@@ -15,8 +15,8 @@
 
 ### Инсталляция утилиты
 - Выбрать рабочую директорию, где должна быть расположена утилита;
-- `curl -fsSL -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/v0.6.1.zip --ssl-no-revoke`
-- `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-0.6.1 mrcmd && chmod +x ./mrcmd/cmd.sh`
+- `curl -fsSL -o mrcmd.zip https://github.com/mondegor/mrcmd/archive/refs/tags/v0.6.2.zip --ssl-no-revoke`
+- `unzip mrcmd.zip && rm mrcmd.zip && mv mrcmd-0.6.2 mrcmd && chmod +x ./mrcmd/cmd.sh`
 - Для Linux, WSL: `sudo bash ./mrcmd/register.sh`
 - Для Windows: `./mrcmd/register.bat` // ВНИМАНИЕ: запускать из PowerShell или проводника под Admin
 - `mrcmd state` // проверить, что утилита была установлена
