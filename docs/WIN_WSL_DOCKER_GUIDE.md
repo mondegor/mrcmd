@@ -207,9 +207,9 @@ swapfile={wsl_swap_file}
 #### 6.1. Установка Go
 - Перед этим желательно выбрать свежий дистрибутив https://go.dev/dl/;
 - Далее в wsl запустить закачку и распаковку дистрибутива:  
-  - `wget https://go.dev/dl/go1.23.3.linux-amd64.tar.gz`;
-  - `tar -C /usr/local -xzf go1.23.3.linux-amd64.tar.gz`;
-  - `rm ./go1.23.3.linux-amd64.tar.gz`;
+  - `wget https://go.dev/dl/go1.26.2.linux-amd64.tar.gz`;
+  - `tar -C /usr/local -xzf go1.26.2.linux-amd64.tar.gz`;
+  - `rm ./go1.26.2.linux-amd64.tar.gz`;
 
 #### 6.2. Добавление Go переменных устанавливаемых при входе в консоль
 - `mkdir /home/{user_login}/work/.cache/golang`
