@@ -122,15 +122,19 @@ function mrcmd_main_init_paths() {
   fi
 
   if [ -n "${APPX_PLUGINS_DIR}" ]; then
-    mrcore_validate_dir_required "${MRCMD_INFO_CAPTION} plugins directory" "${APPX_PLUGINS_DIR}"
+    local appxPluginsDirReal
 
-    if [[ "$(realpath "${APPX_PLUGINS_DIR}")/" == "${MRCMD_DIR}/"* ]]; then
+    mrcore_validate_dir_required "${MRCMD_INFO_CAPTION} plugins directory" "${APPX_PLUGINS_DIR}"
+    appxPluginsDirReal="$(realpath "${APPX_PLUGINS_DIR}")"
+
+    if [[ "${appxPluginsDirReal}/" == "${MRCMD_DIR}/"* ]]; then
       mrcore_echo_error "Project plugins cannot run from ${MRCMD_INFO_CAPTION} dir and its subdirectories"
       ${EXIT_ERROR}
     fi
 
-    if [ -n "${MRCMD_PLUGINS_DIR}" ] && [[ "${MRCMD_PLUGINS_DIR}/" == "$(realpath "${APPX_PLUGINS_DIR}")/" ]]; then
-      mrcore_echo_error "Project plugins cannot run from ${MRCMD_INFO_CAPTION} dir and its subdirectories"
+    if [ -n "${MRCMD_PLUGINS_DIR}" ] && [[ "${appxPluginsDirReal}/" == "${MRCMD_PLUGINS_DIR}/"* ]]; then
+      mrcore_echo_error "Project plugins cannot run from ${MRCMD_INFO_CAPTION} shared plugins dir and its subdirectories"
+      ${EXIT_ERROR}
     fi
   fi
 
@@ -205,4 +209,5 @@ function mrcmd_main_exec {
   fi
 
   mrcore_echo_sample "Run '${MRCMD_INFO_NAME} help' for usage"
+  ${RETURN_FALSE}
 }
