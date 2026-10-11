@@ -49,6 +49,7 @@ function mrcmd_plugins_exec_SINGLE_method() {
   local pluginName="${1:?}"
   local pluginMethod="${2-}"
   local pluginMethodProxy="${MRCMD_PLUGIN_METHOD_EXECUTE}"
+  local errorCode=${ERROR_CODE_FALSE}
   shift
 
   if [ -n "${pluginMethod}" ]; then
@@ -60,7 +61,7 @@ function mrcmd_plugins_exec_SINGLE_method() {
     if mrcmd_plugins_exec_method SINGLE "${pluginName}" "${pluginMethodProxy}" "$@" ; then
       return
     else
-      local errorCode="$?"
+      errorCode="$?"
 
       case "${errorCode}" in
 
@@ -76,7 +77,11 @@ function mrcmd_plugins_exec_SINGLE_method() {
     fi
   fi
 
-  mrcore_echo_sample "Run '${MRCMD_INFO_NAME} ${pluginName} help' for usage"
+  if [[ "${errorCode}" -ne ${ERROR_CODE_UNKNOWN_ERROR} ]]; then
+    mrcore_echo_sample "Run '${MRCMD_INFO_NAME} ${pluginName} help' for usage"
+  fi
+
+  return "${errorCode}"
 }
 
 function mrcmd_plugins_exec_method() {
@@ -85,6 +90,7 @@ function mrcmd_plugins_exec_method() {
   local pluginMethod="${3:?}"
   local fullPluginMethod
   local fullPluginMethodCanExecute
+  local errorCode=0
   shift; shift; shift
 
   fullPluginMethod=$(mrcmd_plugins_lib_get_plugin_method_name "${pluginName}" "${pluginMethod}")
@@ -116,15 +122,15 @@ function mrcmd_plugins_exec_method() {
     fi
 
     return
+  else
+    errorCode="$?"
   fi
-
-  local errorCode="$?"
 
   if [[ "${errorCode}" -eq ${ERROR_CODE_UNKNOWN_COMMAND} ]]; then
     ${RETURN_UNKNOWN_COMMAND}
   fi
 
-  mrcore_echo_error "${fullPluginMethod}(${arguments}) crashed"
+  mrcore_echo_error "${fullPluginMethod}(${arguments}) failed with code ${errorCode}"
   ${RETURN_UNKNOWN_ERROR}
 }
 
